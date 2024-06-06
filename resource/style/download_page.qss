@@ -1,0 +1,11 @@
+QPushButton{
+	border: 0px transparent;
+}
+
+QPushButton:hover{
+	text-decoration: underline;
+}
+
+QFrame > url_search_bar{
+	border-bottom: 1px solid;
+}

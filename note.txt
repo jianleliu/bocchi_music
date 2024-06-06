@@ -1,0 +1,4 @@
+* Wasn't able to paint background of QWidget
+  - opt for QFrame
+
+* QApplication() must be instantiated before UI Window.
