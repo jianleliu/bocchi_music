@@ -1,3 +1,6 @@
+from handler.handler_topBar import handle_toggle_menu
+from handler.handler_side1 import handle_page_switch
+from initialization.initialization_external import initialize_external
 from ui.menu.status_bar import StatusBar
 from ui.menu.menu_bar import MenuBar
 from config.style_manager import STYLE_MAIN_WINDOW
@@ -12,7 +15,7 @@ from PySide6.QtCore import (
     QSize)
 from PySide6.QtGui import (QIcon)
 from PySide6.QtWidgets import (QSizePolicy,
-    QGridLayout, QHBoxLayout, QMainWindow, QVBoxLayout)
+                               QGridLayout, QHBoxLayout, QMainWindow, QVBoxLayout)
 import os
 
 IMAGE_DIR = os.path.join(os.path.dirname(__file__),
@@ -25,6 +28,7 @@ class MainWindow(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
         # self.setupUi(self)
+        initialize_external()
         self.setObjectName('main_window')
         self.setWindowTitle('Bocchi Music')
         # self.apply_stylesheet()
@@ -50,13 +54,35 @@ class MainWindow(QMainWindow):
         self.configure_default_value()
 
         # apply stylesheet
-        # self.apply_stylesheet()
+        self.apply_stylesheet()
 
-#     self.setStyleSheet("""QWidget {
-#   background-color: #ade8f4;
-#   background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(3, 94, 86, 100), stop:1 rgba(255, 255, 255, 255));
-# }
-# """)
+        # handle widget signal
+        self.handle_signal()
+
+    def handle_signal(self):
+        self.handle_playBar_signal()
+        self.handle_centerPages_signal()
+        self.handle_sideExpanded_signal()
+        self.handle_sideShrinked_signal()
+        self.handle_topBar_signal()
+
+    def handle_playBar_signal(self):
+        pass
+
+    def handle_centerPages_signal(self):
+        pass
+
+    def handle_sideShrinked_signal(self):
+        self.widget_sideShrinked.signal_page_switch.connect(
+            lambda page_num: handle_page_switch(self, page_num))
+
+    def handle_sideExpanded_signal(self):
+        self.widget_sideExpanded.signal_page_switch.connect(
+            lambda page_num: handle_page_switch(self, page_num))
+
+    def handle_topBar_signal(self):
+        self.widget_topBar.signal_menu_toggle.connect(
+            lambda checked: handle_toggle_menu(self, checked))
 
     def configure_layout(self):
         self.gridLayout_2 = QGridLayout(self.widget_centralWidget)

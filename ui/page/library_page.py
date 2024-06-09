@@ -16,8 +16,14 @@ class LibraryPage(QFrame):
         super().__init__()
         self.setObjectName('library_page')
 
+        # initialize song table
+        self.initilize_song_table()
+
         # apply stylesheet
         self.apply_stylesheet()
+        
+        # configure display text
+        self.configure_parameters()
 
     def initilize_song_table(self):
         self.gridLayout_3 = QGridLayout(self)
@@ -28,30 +34,31 @@ class LibraryPage(QFrame):
 
         self.gridLayout_3.addItem(self.horizontalSpacer, 0, 0, 1, 1)
 
-        self.play_random_btn = QPushButton(self)
-        self.play_random_btn.setObjectName(u"play_random_btn")
-        self.play_random_btn.setCursor(QCursor(Qt.PointingHandCursor))
+        self.btn_shuffle = QPushButton(self)
+        self.btn_shuffle.setObjectName(u"btn_shuffle")
+        self.btn_shuffle.setCursor(QCursor(Qt.PointingHandCursor))
 
-        self.gridLayout_3.addWidget(self.play_random_btn, 0, 1, 1, 1)
+        self.gridLayout_3.addWidget(self.btn_shuffle, 0, 1, 1, 1)
 
         self.song_table = QTableWidget(self)
         if (self.song_table.columnCount() < 6):
             self.song_table.setColumnCount(6)
-        __qtablewidgetitem = QTableWidgetItem()
-        self.song_table.setHorizontalHeaderItem(0, __qtablewidgetitem)
-        __qtablewidgetitem1 = QTableWidgetItem()
-        self.song_table.setHorizontalHeaderItem(1, __qtablewidgetitem1)
-        __qtablewidgetitem2 = QTableWidgetItem()
-        self.song_table.setHorizontalHeaderItem(2, __qtablewidgetitem2)
-        __qtablewidgetitem3 = QTableWidgetItem()
-        self.song_table.setHorizontalHeaderItem(3, __qtablewidgetitem3)
-        __qtablewidgetitem4 = QTableWidgetItem()
-        self.song_table.setHorizontalHeaderItem(4, __qtablewidgetitem4)
-        __qtablewidgetitem5 = QTableWidgetItem()
-        self.song_table.setHorizontalHeaderItem(5, __qtablewidgetitem5)
+        self.song_table_header = QTableWidgetItem()
+        self.song_table.setHorizontalHeaderItem(0, self.song_table_header)
+        self.song_table_header1 = QTableWidgetItem()
+        self.song_table.setHorizontalHeaderItem(1, self.song_table_header1)
+        self.song_table_header2 = QTableWidgetItem()
+        self.song_table.setHorizontalHeaderItem(2, self.song_table_header2)
+        self.song_table_header3 = QTableWidgetItem()
+        self.song_table.setHorizontalHeaderItem(3, self.song_table_header3)
+        self.song_table_header4 = QTableWidgetItem()
+        self.song_table.setHorizontalHeaderItem(4, self.song_table_header4)
+        self.song_table_header5 = QTableWidgetItem()
+        self.song_table.setHorizontalHeaderItem(5, self.song_table_header5)
         self.song_table.setObjectName(u"song_table")
         self.song_table.viewport().setProperty("cursor",
                                                QCursor(Qt.PointingHandCursor))
+        
         self.song_table.setLineWidth(1)
         self.song_table.setDragDropOverwriteMode(False)
         self.song_table.setAlternatingRowColors(True)
@@ -68,3 +75,11 @@ class LibraryPage(QFrame):
         with open(stylesheet_path, 'r') as file:
             stylesheet = file.read()
             self.setStyleSheet(stylesheet)
+
+    def configure_parameters(self):
+        self.song_table_header1.setText('Title')
+        self.song_table_header2.setText('Artist')
+        self.song_table_header3.setText('Last Played')
+        self.song_table_header4.setText('Date Added')
+        self.song_table_header5.setText('Times Played')
+        self.btn_shuffle.setText('Shuffle')

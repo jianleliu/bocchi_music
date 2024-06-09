@@ -1,2 +1,2 @@
 import os
-os.system('start /min pythonw .\main.py')
+os.system(r'start /min pythonw .\main.py')

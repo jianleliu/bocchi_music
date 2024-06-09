@@ -4,7 +4,7 @@ IMAGE_HOME_BTN_1 = IMAGE_HOME_BTN_2 = u'home.png'
 IMAGE_LIBRARY_BTN_1 = IMAGE_LIBRARY_BTN_2 = u'musical-library.png'
 IMAGE_PLAYLIST_BTN_1 = IMAGE_PLAYLIST_BTN_2 = u'playlist.png'
 IMAGE_DOWNLOAD_BTN_1 = IMAGE_DOWNLOAD_BTN_2 = u'download.png'
-IMAGE_SETTING_BTN_1 = IMAGE_SETTING_BTN_2 = u'setting.png'
+IMAGE_SETTINGS_BTN_1 = IMAGE_SETTINGS_BTN_2 = u'setting.png'
 
 # top bar
 IMAGE_MENU = u'menu.png'

@@ -1,11 +1,10 @@
-from PySide6.QtCore import (QSize, Qt)
+from PySide6.QtCore import (QSize, Qt, Signal)
 from PySide6.QtGui import (QCursor, QIcon)
 from PySide6.QtWidgets import (
     QFrame, QHBoxLayout, QLineEdit, QPushButton, QSizePolicy, QSpacerItem)
 import os
 from config.style_manager import STYLE_TOP_BAR
 from config.image_manager import IMAGE_SEARCH, IMAGE_MENU
-
 
 IMAGE_DIR = os.path.join(os.path.dirname(__file__),
                          f'../../resource/images')
@@ -14,6 +13,8 @@ STYLE_DIR = os.path.join(os.path.dirname(__file__),
 
 
 class TopBar(QFrame):
+    signal_menu_toggle = Signal(bool)
+    
     def __init__(self, centralWidget):
         super().__init__(centralWidget)
         self.setObjectName(u"top_bar")
@@ -28,30 +29,39 @@ class TopBar(QFrame):
         self.initialize_components()
         # stylesheet
         self.apply_stylesheet()
+        
+        # configure display text
+        self.configure_parameters()
+        
+        # emit signal
+        self.emit_signal()
+        
+    def emit_signal(self):
+        self.btn_menu.toggled.connect(self.signal_menu_toggle.emit)
 
     def initialize_components(self):
         self.horizontalLayout_4 = QHBoxLayout(self)
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
         self.horizontalLayout_3 = QHBoxLayout()
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
-        self.menu_btn = QPushButton(self)
-        self.menu_btn.setObjectName(u"menu_btn")
+        self.btn_menu = QPushButton(self)
+        self.btn_menu.setObjectName(u"btn_menu")
         sizePolicy6 = QSizePolicy(QSizePolicy.Policy.Fixed,
                                   QSizePolicy.Policy.Fixed)
         sizePolicy6.setHorizontalStretch(0)
         sizePolicy6.setVerticalStretch(0)
         sizePolicy6.setHeightForWidth(
-            self.menu_btn.sizePolicy().hasHeightForWidth())
-        self.menu_btn.setSizePolicy(sizePolicy6)
-        self.menu_btn.setCursor(QCursor(Qt.PointingHandCursor))
+            self.btn_menu.sizePolicy().hasHeightForWidth())
+        self.btn_menu.setSizePolicy(sizePolicy6)
+        self.btn_menu.setCursor(QCursor(Qt.PointingHandCursor))
         icon6 = QIcon()
         image_path = os.path.join(IMAGE_DIR, IMAGE_MENU)
         icon6.addFile(image_path, QSize(), QIcon.Normal, QIcon.Off)
-        self.menu_btn.setIcon(icon6)
-        self.menu_btn.setCheckable(True)
-        self.menu_btn.setAutoExclusive(True)
+        self.btn_menu.setIcon(icon6)
+        self.btn_menu.setCheckable(True)
+        self.btn_menu.setAutoExclusive(True)
 
-        self.horizontalLayout_3.addWidget(self.menu_btn)
+        self.horizontalLayout_3.addWidget(self.btn_menu)
 
         self.horizontalSpacer_5 = QSpacerItem(
             138, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
@@ -96,3 +106,6 @@ class TopBar(QFrame):
         with open(stylesheet_path, "r") as file:
             stylesheet = file.read()
             self.setStyleSheet(stylesheet)
+    
+    def configure_parameters(self):
+        self.search_bar.setPlaceholderText('Search')

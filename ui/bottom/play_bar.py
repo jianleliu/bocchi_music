@@ -1,7 +1,7 @@
-from PySide6.QtCore import (QSize, Qt)
+from PySide6.QtCore import (QSize, Qt, QTimer, QTime)
 from PySide6.QtGui import (QCursor, QIcon)
 from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QPushButton, QSizePolicy, QSlider, QSpacerItem,
-                               QVBoxLayout)
+                               QVBoxLayout, QLCDNumber)
 import os
 from config.style_manager import STYLE_PLAY_BAR
 from config.image_manager import (IMAGE_LOGO, IMAGE_BACKWARD, IMAGE_CYCLE,
@@ -21,8 +21,8 @@ class PlayBar(QFrame):
                                   QSizePolicy.Policy.Fixed)
         sizePolicy5.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
         self.setSizePolicy(sizePolicy5)
-        self.setMinimumSize(QSize(0, 75))
-        self.setMaximumSize(QSize(16777215, 75))
+        self.setMinimumSize(QSize(0, 85))
+        self.setMaximumSize(QSize(16777215, 85))
 
         self.horizontalLayout_6 = QHBoxLayout(self)
         self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
@@ -59,6 +59,9 @@ class PlayBar(QFrame):
 
         self.horizontalLayout_5.addItem(self.horizontalSpacer_15)
 
+        # current timestamp
+        self.initialize_lcd_current_timestamp()
+        
         # buttons
         self.initialize_buttons()
 
@@ -92,6 +95,9 @@ class PlayBar(QFrame):
         # apply stylesheet
         self.apply_stylesheet()
         # self.setStyleSheet(TEMP_STYLE)
+        
+        # configure display text
+        self.configure_parameters()
 
     def initialize_slider_volume(self):
         self.volume_slide = QSlider(self)
@@ -135,10 +141,10 @@ class PlayBar(QFrame):
         self.horizontalLayout_6.addWidget(self.play_order_btn)
 
     def initialize_label_end_timestamp(self):
-        self.label_16 = QLabel(self)
-        self.label_16.setObjectName(u"label_16")
+        self.label_end_timestamp = QLabel(self)
+        self.label_end_timestamp.setObjectName(u"label_end_timestamp")
 
-        self.horizontalLayout_6.addWidget(self.label_16)
+        self.horizontalLayout_6.addWidget(self.label_end_timestamp)
 
     def initialize_buttons(self):
         # backward
@@ -207,18 +213,36 @@ class PlayBar(QFrame):
         self.verticalLayout_6.addWidget(self.song_progress_slide)
 
     def initialize_label_track_title(self):
-        self.play_title = QLabel(self)
-        self.play_title.setObjectName(u"play_title")
-        self.play_title.setMinimumSize(QSize(0, 25))
-        self.play_title.setAlignment(Qt.AlignCenter)
+        self.label_play_title = QLabel(self)
+        self.label_play_title.setObjectName(u"label_play_title")
+        self.label_play_title.setMinimumSize(QSize(0, 25))
+        self.label_play_title.setAlignment(Qt.AlignCenter)
 
-        self.verticalLayout_6.addWidget(self.play_title)
+        self.verticalLayout_6.addWidget(self.label_play_title)
 
     def initialize_label_current_timestamp(self):
-        self.label_5 = QLabel(self)
-        self.label_5.setObjectName(u"current_timestamp")
+        self.label_current_timestamp = QLabel(self)
+        self.label_current_timestamp.setObjectName(u"current_timestamp")
 
-        self.horizontalLayout_6.addWidget(self.label_5)
+        self.horizontalLayout_6.addWidget(self.label_current_timestamp)
+    
+    def initialize_lcd_current_timestamp(self):
+        self.lcd_current_timestamp = QLCDNumber(self)
+        self.lcd_current_timestamp.setDigitCount(5)
+        
+        self.horizontalLayout_6.addWidget(self.lcd_current_timestamp)
+        
+         # Set up a timer to update the timestamp every second
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_time)
+        self.timer.start(1000)  # Update every second
+
+        # Simulate starting the song at 00:00
+        self.current_time = QTime(0, 0, 0)
+        
+    def update_time(self):
+        self.current_time = self.current_time.addSecs(1)
+        self.lcd_current_timestamp.display(self.current_time.toString("mm:ss"))
 
     def initialize_button_thumbnail(self):
         self.thumbnail = QPushButton(self)
@@ -246,3 +270,8 @@ class PlayBar(QFrame):
         with open(stylesheet_path, 'r') as file:
             stylesheet = file.read()
             self.setStyleSheet(stylesheet)
+            
+    def configure_parameters(self):
+        self.label_play_title.setText('Title')
+        self.label_current_timestamp.setText('0:00')
+        self.label_end_timestamp.setText('0:00')

@@ -20,7 +20,7 @@ class CenterPages(QStackedWidget):
         self.setSizePolicy(sizePolicy8)
         # add pages to this stacked widget
         self.add_pages()
-        self.setCurrentIndex(0)
+        self.setCurrentIndex(2)
 
         # apply stylesheet
         self.apply_stylesheet()

@@ -2,8 +2,14 @@ QPushButton{
 	border: 0px transparent;
 }
 
-QPushButton:hover{
+QPushButton:hover {
 	text-decoration: underline;
+}
+
+QPushButton:pressed {
+    border-radius: 5px;
+    background-color: #97e4f1;
+    border-style: inset;
 }
 
 QFrame > url_search_bar{

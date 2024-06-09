@@ -1,5 +1,5 @@
 from PySide6.QtCore import (
-    QSize, Qt)
+    QSize, Qt, Signal)
 from PySide6.QtGui import (QCursor, QIcon, QPixmap)
 from PySide6.QtWidgets import (
     QSizePolicy, QFrame, QHBoxLayout, QLabel, QPushButton, QSpacerItem, QVBoxLayout)
@@ -7,7 +7,7 @@ import os
 from config.style_manager import STYLE_SIDE_EXPANDED
 from config.image_manager import (IMAGE_LOGO, IMAGE_HOME_BTN_2, IMAGE_LIBRARY_BTN_2,
                                   IMAGE_PLAYLIST_BTN_2, IMAGE_DOWNLOAD_BTN_2,
-                                  IMAGE_SETTING_BTN_2)
+                                  IMAGE_SETTINGS_BTN_2)
 
 IMAGE_DIR = os.path.join(os.path.dirname(__file__),
                          f'../../resource/images')
@@ -16,6 +16,8 @@ STYLE_DIR = os.path.join(os.path.dirname(__file__),
 
 
 class SideExpanded(QFrame):
+    signal_page_switch = Signal(int)
+
     def __init__(self, centralWidget):
         super().__init__(centralWidget)
         self.setObjectName('side_expanded')
@@ -40,6 +42,24 @@ class SideExpanded(QFrame):
 
         # apply stylesheet
         self.apply_stylesheet()
+
+        # configure display text
+        self.configure_parameters()
+
+        # signal
+        self.emit_signal()
+
+    def emit_signal(self):
+        self.btn_home_2.clicked.connect(
+            lambda: self.signal_page_switch.emit(0))
+        self.btn_library_2.clicked.connect(
+            lambda: self.signal_page_switch.emit(1))
+        self.btn_playlist_2.clicked.connect(
+            lambda: self.signal_page_switch.emit(2))
+        self.btn_download_2.clicked.connect(
+            lambda: self.signal_page_switch.emit(3))
+        self.btn_settings_2.clicked.connect(
+            lambda: self.signal_page_switch.emit(4))
 
     def initialize_logo(self):
         self.horizontalLayout = QHBoxLayout()
@@ -66,68 +86,68 @@ class SideExpanded(QFrame):
         self.verticalLayout.setObjectName('verticalLayout')
 
         # home button
-        self.home_btn_2 = QPushButton(self)
-        self.home_btn_2.setObjectName('home_btn_expanded')
+        self.btn_home_2 = QPushButton(self)
+        self.btn_home_2.setObjectName('home_btn_expanded')
         sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Minimum,
                                   QSizePolicy.Policy.Fixed)
         sizePolicy4.setHorizontalStretch(0)
         sizePolicy4.setVerticalStretch(0)
         sizePolicy4.setHeightForWidth(
-            self.home_btn_2.sizePolicy().hasHeightForWidth())
-        self.home_btn_2.setSizePolicy(sizePolicy4)
-        self.home_btn_2.setSizeIncrement(QSize(0, 0))
-        self.home_btn_2.setCursor(QCursor(Qt.PointingHandCursor))
+            self.btn_home_2.sizePolicy().hasHeightForWidth())
+        self.btn_home_2.setSizePolicy(sizePolicy4)
+        self.btn_home_2.setSizeIncrement(QSize(0, 0))
+        self.btn_home_2.setCursor(QCursor(Qt.PointingHandCursor))
         icon1 = QIcon()
         image_path = os.path.join(IMAGE_DIR, IMAGE_HOME_BTN_2)
         icon1.addFile(image_path, QSize(), QIcon.Normal, QIcon.Off)
 
-        self.home_btn_2.setIcon(icon1)
-        self.home_btn_2.setIconSize(QSize(18, 18))
-        self.home_btn_2.setCheckable(True)
-        self.home_btn_2.setAutoExclusive(True)
+        self.btn_home_2.setIcon(icon1)
+        self.btn_home_2.setIconSize(QSize(18, 18))
+        self.btn_home_2.setCheckable(True)
+        self.btn_home_2.setAutoExclusive(True)
 
-        self.verticalLayout.addWidget(self.home_btn_2)
+        self.verticalLayout.addWidget(self.btn_home_2)
 
         # library button
-        self.library_btn_2 = QPushButton(self)
-        self.library_btn_2.setObjectName('library_btn_expanded')
-        self.library_btn_2.setCursor(QCursor(Qt.PointingHandCursor))
+        self.btn_library_2 = QPushButton(self)
+        self.btn_library_2.setObjectName('library_btn_expanded')
+        self.btn_library_2.setCursor(QCursor(Qt.PointingHandCursor))
         icon2 = QIcon()
         image_path = os.path.join(IMAGE_DIR, IMAGE_LIBRARY_BTN_2)
         icon2.addFile(image_path, QSize(), QIcon.Normal, QIcon.Off)
-        self.library_btn_2.setIcon(icon2)
-        self.library_btn_2.setIconSize(QSize(18, 18))
-        self.library_btn_2.setCheckable(True)
-        self.library_btn_2.setAutoExclusive(True)
+        self.btn_library_2.setIcon(icon2)
+        self.btn_library_2.setIconSize(QSize(18, 18))
+        self.btn_library_2.setCheckable(True)
+        self.btn_library_2.setAutoExclusive(True)
 
-        self.verticalLayout.addWidget(self.library_btn_2)
+        self.verticalLayout.addWidget(self.btn_library_2)
 
         # playlist button
-        self.playlist_btn_2 = QPushButton(self)
-        self.playlist_btn_2.setObjectName('playlist_btn_expanded')
-        self.playlist_btn_2.setCursor(QCursor(Qt.PointingHandCursor))
+        self.btn_playlist_2 = QPushButton(self)
+        self.btn_playlist_2.setObjectName('playlist_btn_expanded')
+        self.btn_playlist_2.setCursor(QCursor(Qt.PointingHandCursor))
         icon3 = QIcon()
         image_path = os.path.join(IMAGE_DIR, IMAGE_PLAYLIST_BTN_2)
         icon3.addFile(image_path, QSize(), QIcon.Normal, QIcon.Off)
-        self.playlist_btn_2.setIcon(icon3)
-        self.playlist_btn_2.setIconSize(QSize(18, 18))
-        self.playlist_btn_2.setCheckable(True)
-        self.playlist_btn_2.setAutoExclusive(True)
+        self.btn_playlist_2.setIcon(icon3)
+        self.btn_playlist_2.setIconSize(QSize(18, 18))
+        self.btn_playlist_2.setCheckable(True)
+        self.btn_playlist_2.setAutoExclusive(True)
 
-        self.verticalLayout.addWidget(self.playlist_btn_2)
+        self.verticalLayout.addWidget(self.btn_playlist_2)
 
-        self.download_btn_2 = QPushButton(self)
-        self.download_btn_2.setObjectName('download_btn_expanded')
-        self.download_btn_2.setCursor(QCursor(Qt.PointingHandCursor))
+        self.btn_download_2 = QPushButton(self)
+        self.btn_download_2.setObjectName('download_btn_expanded')
+        self.btn_download_2.setCursor(QCursor(Qt.PointingHandCursor))
         icon4 = QIcon()
         image_path = os.path.join(IMAGE_DIR, IMAGE_DOWNLOAD_BTN_2)
         icon4.addFile(image_path, QSize(), QIcon.Normal, QIcon.Off)
-        self.download_btn_2.setIcon(icon4)
-        self.download_btn_2.setIconSize(QSize(18, 18))
-        self.download_btn_2.setCheckable(True)
-        self.download_btn_2.setAutoExclusive(True)
+        self.btn_download_2.setIcon(icon4)
+        self.btn_download_2.setIconSize(QSize(18, 18))
+        self.btn_download_2.setCheckable(True)
+        self.btn_download_2.setAutoExclusive(True)
 
-        self.verticalLayout.addWidget(self.download_btn_2)
+        self.verticalLayout.addWidget(self.btn_download_2)
 
         # veritical spacer
         self.verticalLayout_2.addLayout(self.verticalLayout)
@@ -138,17 +158,17 @@ class SideExpanded(QFrame):
         self.verticalLayout_2.addItem(self.spacer_2)
 
         # setting button
-        self.setting_btn_2 = QPushButton(self)
-        self.setting_btn_2.setObjectName('setting_btn_expanded')
+        self.btn_settings_2 = QPushButton(self)
+        self.btn_settings_2.setObjectName('setting_btn_expanded')
         icon5 = QIcon()
-        image_path = os.path.join(IMAGE_DIR, IMAGE_SETTING_BTN_2)
+        image_path = os.path.join(IMAGE_DIR, IMAGE_SETTINGS_BTN_2)
         icon5.addFile(image_path, QSize(), QIcon.Normal, QIcon.Off)
-        self.setting_btn_2.setIcon(icon5)
-        self.setting_btn_2.setIconSize(QSize(18, 18))
-        self.setting_btn_2.setCheckable(True)
-        self.setting_btn_2.setAutoExclusive(True)
+        self.btn_settings_2.setIcon(icon5)
+        self.btn_settings_2.setIconSize(QSize(18, 18))
+        self.btn_settings_2.setCheckable(True)
+        self.btn_settings_2.setAutoExclusive(True)
 
-        self.verticalLayout_2.addWidget(self.setting_btn_2)
+        self.verticalLayout_2.addWidget(self.btn_settings_2)
 
         self.verticalLayout_5.addLayout(self.verticalLayout_2)
 
@@ -158,3 +178,10 @@ class SideExpanded(QFrame):
         with open(stylesheet_path, 'r') as file:
             stylesheet = file.read()
             self.setStyleSheet(stylesheet)
+
+    def configure_parameters(self):
+        self.btn_home_2.setText('Home')
+        self.btn_library_2.setText('Library')
+        self.btn_playlist_2.setText('Library')
+        self.btn_download_2.setText('Download')
+        self.btn_settings_2.setText('Settings')
