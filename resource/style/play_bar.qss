@@ -1,0 +1,35 @@
+QFrame > * {
+	background: #48cae4;
+	border: 5px solid transparent;
+	border-radius: 5px;
+}
+
+QPushButton{
+    border: 1px solid transparent;
+	text-align: center;
+}
+
+QPushButton:hover {
+	text-decoration: underline;
+}
+
+QPushButton:pressed {
+    border-radius: 5px;
+    background-color: #8ad0dd;
+    border-style: inset;
+}
+
+QSlider#song_progress_slide{
+	border-radius: 0px;
+	padding-top: 0px;
+	padding-bottom: 5px;
+	margin-bottom: 5px;
+	border-bottom: 1px solid;
+}
+
+QSlider#volume_slide{
+	border-radius: 0px;
+	padding-top: 0px;
+	padding-bottom: 5px;
+	border-bottom: 1px solid;
+}
