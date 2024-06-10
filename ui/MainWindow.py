@@ -1,6 +1,8 @@
 from handler.handler_topBar import handle_toggle_menu
 from handler.handler_side1 import handle_page_switch
+from handler.handler_main import handle_populate_table_song, handle_player
 from initialization.initialization_external import initialize_external
+from initialization.initialization_internal import generate_dict_song_entity
 from ui.menu.status_bar import StatusBar
 from ui.menu.menu_bar import MenuBar
 from config.style_manager import STYLE_MAIN_WINDOW
@@ -9,8 +11,9 @@ from .central import CentralWidget
 from ui.top.top_bar import TopBar
 from ui.side.Side_2 import SideExpanded
 from ui.side.side_1 import SideShrinked
-from ui.page.center import CenterPages
+from ui.page.page_manager import PageManager
 from ui.bottom.play_bar import PlayBar
+from ui.media.media_player import VideoWidget
 from PySide6.QtCore import (
     QSize)
 from PySide6.QtGui import (QIcon)
@@ -26,21 +29,23 @@ STYLE_DIR = os.path.join(os.path.dirname(__file__),
 
 class MainWindow(QMainWindow):
     def __init__(self) -> None:
+        # initialization
         super().__init__()
-        # self.setupUi(self)
         initialize_external()
+        self.initializae_variables()
+
         self.setObjectName('main_window')
         self.setWindowTitle('Bocchi Music')
-        # self.apply_stylesheet()
 
         self.widget_centralWidget = CentralWidget(self)
 
         # initialize widgets
         self.widget_playBar = PlayBar(self.widget_centralWidget)
-        self.widget_centerPages = CenterPages(self.widget_centralWidget)
+        self.widget_PageManager = PageManager(self.widget_centralWidget)
         self.widget_sideShrinked = SideShrinked(self.widget_centralWidget)
         self.widget_sideExpanded = SideExpanded(self.widget_centralWidget)
         self.widget_topBar = TopBar(self.widget_centralWidget)
+        self.widget_videoWidget = VideoWidget(self.widget_centralWidget)
 
         # menu bar
         self.setCentralWidget(self.widget_centralWidget)
@@ -61,7 +66,7 @@ class MainWindow(QMainWindow):
 
     def handle_signal(self):
         self.handle_playBar_signal()
-        self.handle_centerPages_signal()
+        self.handle_PageManager_signal()
         self.handle_sideExpanded_signal()
         self.handle_sideShrinked_signal()
         self.handle_topBar_signal()
@@ -69,8 +74,16 @@ class MainWindow(QMainWindow):
     def handle_playBar_signal(self):
         pass
 
-    def handle_centerPages_signal(self):
-        pass
+    def handle_PageManager_signal(self):
+        self.handle_page_library_signal()
+
+    def handle_page_library_signal(self):
+        self.widget_page_library = self.widget_PageManager.get_page('page_library')
+
+        self.widget_page_library.signal_populate_table_song.connect(
+            lambda: handle_populate_table_song(self.widget_page_library.table_song, self.dict_song_entity))
+
+        self.widget_page_library.signal_play_pause_clicked.connect(lambda row: handle_player(self, row))
 
     def handle_sideShrinked_signal(self):
         self.widget_sideShrinked.signal_page_switch.connect(
@@ -100,7 +113,8 @@ class MainWindow(QMainWindow):
         self.horizontalLayout_11.addWidget(self.widget_sideExpanded)
 
         self.verticalLayout_10.addWidget(self.widget_topBar)
-        self.verticalLayout_10.addWidget(self.widget_centerPages)
+        self.verticalLayout_10.addWidget(self.widget_PageManager)
+        self.verticalLayout_10.addWidget(self.widget_videoWidget)
 
         self.horizontalLayout_12.addLayout(self.horizontalLayout_11)
         self.horizontalLayout_12.addLayout(self.verticalLayout_10)
@@ -122,9 +136,12 @@ class MainWindow(QMainWindow):
         self.setSizePolicy(sizePolicy)
         self.setMouseTracking(False)
         icon = QIcon()
-        image_path = os.path.join(IMAGE_DIR, IMAGE_LOGO)
-        icon.addFile(image_path, QSize(), QIcon.Normal, QIcon.Off)
+        icon.addFile(IMAGE_LOGO, QSize(), QIcon.Normal, QIcon.Off)
         self.setWindowIcon(icon)
+
+    def initializae_variables(self):
+        self.dict_song_entity = generate_dict_song_entity()
+        self.dict_player_states = {}
 
     def apply_stylesheet(self):
         stylesheet_path = os.path.join(STYLE_DIR, STYLE_MAIN_WINDOW)

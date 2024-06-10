@@ -39,19 +39,3 @@ class CentralWidget(QFrame):
     with open(stylesheet_path, "r") as file:
         stylesheet = file.read()
         self.setStyleSheet(stylesheet)
-        print(stylesheet)
-    
-#   def paintEvent(self, event):
-#         # Ensure the parent paintEvent is called
-#         super().paintEvent(event)
-
-#         # Create a QPainter object to handle the custom painting
-#         painter = QPainter(self)
-
-#         # Create the gradient
-#         gradient = QLinearGradient(0, 0, self.width(), 0)
-#         gradient.setColorAt(0, QColor(3, 94, 86, 100))
-#         gradient.setColorAt(1, QColor(255, 255, 255, 255))
-
-#         # Fill the widget with the gradient
-#         painter.fillRect(self.rect(), gradient)

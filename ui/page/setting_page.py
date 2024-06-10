@@ -18,7 +18,7 @@ class SettingPage(QFrame):
         self.setObjectName('setting_page')
         self.verticalLayout_26 = QVBoxLayout(self)
         self.verticalLayout_26.setObjectName('verticalLayout_26')
-
+        
         #
         self.tabWidget = QTabWidget(self)
         self.tabWidget.setObjectName('tabWidget')

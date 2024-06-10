@@ -19,11 +19,8 @@ class DownloadPage(QFrame):
     signal_download = Signal
 
     def __init__(self):
-        print('download page 1')
         super().__init__()
-        print('download page 3')
         self.setObjectName(u"download_page")
-        print('download page 2')
         self.verticalLayout_24 = QVBoxLayout(self)
         self.verticalLayout_24.setObjectName(u"verticalLayout_24")
         self.horizontalLayout_7 = QHBoxLayout()

@@ -8,3 +8,4 @@ def update_config_ini(section, key, value):
     
     with open(INI_FILE_PATH, 'w') as f:
         config.write(f)
+        
