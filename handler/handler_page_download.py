@@ -38,11 +38,13 @@ def handle_download_track(window, url):
         print(f'dir_song: {dir_song} audio only: {check_audio_only}')
         if msg_box.clickedButton() == btn_song:
             print('btn_song')
-            download_mp3(url, directory=dir_song, audio_only=check_audio_only)
+            download_mp4(url, directory=dir_song, audio_only=check_audio_only)
         elif msg_box.clickedButton() == btn_playlist:
             download_playlist()
-        else:
-            return
+        
+        return
+    else:
+        download_mp4(url, directory=dir_song, audio_only=check_audio_only)
 
 
 def read_config_ini():
@@ -59,10 +61,10 @@ def read_config_ini():
         KEY_CHECK_INCLUDE_THUMBNAIL)
 
 
-def download_mp3(video_url, directory=os.getcwd(), audio_only=True):
+def download_mp4(video_url, directory=os.getcwd(), audio_only=True):
     print(f'url: {video_url} directory: {directory}')
     yt = YouTube(video_url)
-    stream = yt.streams.filter(only_audio=True).first()
+    stream = yt.streams.filter(only_audio=audio_only).first()
     stream.download(output_path=directory)
 
     file_path = stream.get_file_path()

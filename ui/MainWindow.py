@@ -1,6 +1,6 @@
 from handler.handler_topBar import handle_toggle_menu
 from handler.handler_side1 import handle_page_switch
-from handler.handler_main import handle_populate_table_song, handle_player
+from handler.handler_main import *
 from initialization.initialization_external import initialize_external
 from initialization.initialization_internal import generate_dict_song_entity
 from ui.menu.status_bar import StatusBar
@@ -12,7 +12,7 @@ from ui.top.top_bar import TopBar
 from ui.side.Side_2 import SideExpanded
 from ui.side.side_1 import SideShrinked
 from ui.page.page_manager import PageManager
-from ui.bottom.play_bar import PlayBar
+from ui.media.play_bar import PlayBar
 from ui.media.media_player import VideoWidget
 from PySide6.QtCore import (
     QSize)
@@ -41,7 +41,7 @@ class MainWindow(QMainWindow):
 
         # initialize widgets
         self.widget_playBar = PlayBar(self.widget_centralWidget)
-        self.widget_PageManager = PageManager(self.widget_centralWidget)
+        self.widget_pageManager = PageManager(self.widget_centralWidget)
         self.widget_sideShrinked = SideShrinked(self.widget_centralWidget)
         self.widget_sideExpanded = SideExpanded(self.widget_centralWidget)
         self.widget_topBar = TopBar(self.widget_centralWidget)
@@ -55,7 +55,7 @@ class MainWindow(QMainWindow):
         self.setStatusBar(self.statusBar_status_bar)
 
         # configure widget layouts
-        self.configure_layout()
+        self.initialize_layout()
         self.configure_default_value()
 
         # apply stylesheet
@@ -70,20 +70,24 @@ class MainWindow(QMainWindow):
         self.handle_sideExpanded_signal()
         self.handle_sideShrinked_signal()
         self.handle_topBar_signal()
+        self.handle_videoWidget_signal()
 
     def handle_playBar_signal(self):
-        pass
+        self.widget_playBar.signal_btn_spinning_bocchi_clicked.connect(
+            lambda: handle_spinning_bocchi_clicked(self.widget_pageManager, self.widget_videoWidget))
 
     def handle_PageManager_signal(self):
         self.handle_page_library_signal()
 
     def handle_page_library_signal(self):
-        self.widget_page_library = self.widget_PageManager.get_page('page_library')
+        self.widget_page_library = self.widget_pageManager.get_page(
+            'page_library')
 
         self.widget_page_library.signal_populate_table_song.connect(
             lambda: handle_populate_table_song(self.widget_page_library.table_song, self.dict_song_entity))
 
-        self.widget_page_library.signal_play_pause_clicked.connect(lambda row: handle_player(self, row))
+        self.widget_page_library.signal_play_pause_clicked.connect(
+            lambda row: handle_player(self, row))
 
     def handle_sideShrinked_signal(self):
         self.widget_sideShrinked.signal_page_switch.connect(
@@ -96,8 +100,14 @@ class MainWindow(QMainWindow):
     def handle_topBar_signal(self):
         self.widget_topBar.signal_menu_toggle.connect(
             lambda checked: handle_toggle_menu(self, checked))
+    
+    def handle_videoWidget_signal(self):
+        self.widget_videoWidget.signal_track_paused.connect(handle_track_paused)
+        self.widget_videoWidget.signal_track_played.connect(handle_track_played)
+        self.widget_videoWidget.signal_track_stopped.connect(handle_track_stopped)
+        
 
-    def configure_layout(self):
+    def initialize_layout(self):
         self.gridLayout_2 = QGridLayout(self.widget_centralWidget)
         self.gridLayout_2.setObjectName('Outer_most_layout')
         self.verticalLayout_9 = QVBoxLayout()
@@ -113,7 +123,7 @@ class MainWindow(QMainWindow):
         self.horizontalLayout_11.addWidget(self.widget_sideExpanded)
 
         self.verticalLayout_10.addWidget(self.widget_topBar)
-        self.verticalLayout_10.addWidget(self.widget_PageManager)
+        self.verticalLayout_10.addWidget(self.widget_pageManager)
         self.verticalLayout_10.addWidget(self.widget_videoWidget)
 
         self.horizontalLayout_12.addLayout(self.horizontalLayout_11)
