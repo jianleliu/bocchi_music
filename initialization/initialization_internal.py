@@ -11,12 +11,14 @@ def generate_dict_song_entity() -> dict:
   dict_song_entity = {}
   dir_song = config[SECTION_SETTINGS_TAB_1][KEY_DIR_TRACK_DOWNLOAD]
 
+  count = 0
   if path.isdir(dir_song):
-    for i, file in enumerate(listdir(dir_song)):
+    for file in listdir(dir_song):
       if path.isfile(path.join(dir_song, file)):
         basename = path.basename(file)
-        dict_song_entity.setdefault(i, {
+        dict_song_entity.setdefault(count, {
           KEY_DICT_SONG_ENTITY_BASENAME: basename,
           KEY_DICT_SONG_ENTITY_TITLE: path.splitext(basename)[0],
         })
+        count += 1
   return dict_song_entity

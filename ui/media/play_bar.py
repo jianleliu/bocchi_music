@@ -15,6 +15,15 @@ STYLE_DIR = os.path.join(os.path.dirname(__file__),
 
 class PlayBar(QFrame):
     signal_btn_spinning_bocchi_clicked = Signal()
+    signal_btn_backward_clicked = Signal()
+    signal_btn_prev_clicked = Signal()
+    signal_btn_play_pause_clicked = Signal()
+    signal_btn_next_clicked = Signal()
+    signal_btn_forward_clicked = Signal()
+    signal_slider_progress_changed = Signal()
+    signal_play_order_clicked = Signal()
+    signal_volume_clicked = Signal()
+    signal_slider_volume_changed = Signal()
 
     def __init__(self, centralWidget):
         super().__init__(centralWidget)
@@ -38,13 +47,14 @@ class PlayBar(QFrame):
 
         # configure display text
         self.configure_parameters()
-        
+
+
         # emit signals
         self.emit_signal()
         
     def emit_signal(self):
         self.btn_spinning_bocchi.clicked.connect(self.signal_btn_spinning_bocchi_clicked)
-
+        # self.slider_progress.setRange
 
     def initalize_components(self):
         self.initialize_button_thumbnail()
@@ -52,7 +62,7 @@ class PlayBar(QFrame):
         self.initialize_label_current_timestamp()
         self.initialize_label_track_title()
         self.initialize_slider_progress()
-        self.initialize_lcd_current_timestamp()
+        # self.initialize_lcd_current_timestamp()
         self.initalize_horizontalSpacer_center_bottom_left()
         self.initialize_buttons()
         self.initialize_horizontalSpacer_center_bottom_right()
@@ -175,14 +185,14 @@ class PlayBar(QFrame):
         self.horizontalLayout_center_bottom.addWidget(self.btn_prev)
 
         # pause
-        self.btn_pause_start = QPushButton(self)
-        self.btn_pause_start.setObjectName('btn_pause_start')
-        self.btn_pause_start.setCursor(QCursor(Qt.PointingHandCursor))
+        self.btn_play_pause = QPushButton(self)
+        self.btn_play_pause.setObjectName('btn_play_pause')
+        self.btn_play_pause.setCursor(QCursor(Qt.PointingHandCursor))
         icon10 = QIcon()
         icon10.addFile(IMAGE_PAUSE, QSize(), QIcon.Normal, QIcon.Off)
-        self.btn_pause_start.setIcon(icon10)
+        self.btn_play_pause.setIcon(icon10)
 
-        self.horizontalLayout_center_bottom.addWidget(self.btn_pause_start)
+        self.horizontalLayout_center_bottom.addWidget(self.btn_play_pause)
 
         # next
         self.btn_next = QPushButton(self)
@@ -206,13 +216,13 @@ class PlayBar(QFrame):
         self.horizontalLayout_center_bottom.addWidget(self.btn_forward)
 
     def initialize_slider_progress(self):
-        self.slide_song_progress = QSlider(self)
-        self.slide_song_progress.setObjectName('slide_song_progress')
-        self.slide_song_progress.setMinimumSize(QSize(0, 20))
-        self.slide_song_progress.setCursor(QCursor(Qt.PointingHandCursor))
-        self.slide_song_progress.setOrientation(Qt.Horizontal)
-
-        self.verticalLayout_center_section.addWidget(self.slide_song_progress)
+        self.slider_progress = QSlider(self)
+        self.slider_progress.setObjectName('slider_progress')
+        self.slider_progress.setMinimumSize(QSize(0, 20))
+        self.slider_progress.setCursor(QCursor(Qt.PointingHandCursor))
+        self.slider_progress.setOrientation(Qt.Horizontal)
+        
+        self.verticalLayout_center_section.addWidget(self.slider_progress)
 
     def initialize_label_track_title(self):
         self.label_play_title = QLabel(self)
@@ -241,6 +251,7 @@ class PlayBar(QFrame):
 
         # Simulate starting the song at 00:00
         self.current_time = QTime(0, 0, 0)
+        self.current_time.setHMS(0,0,1000)
 
     def initialize_button_thumbnail(self):
         self.btn_spinning_bocchi = QPushButton(self)

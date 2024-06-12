@@ -100,12 +100,16 @@ class MainWindow(QMainWindow):
     def handle_topBar_signal(self):
         self.widget_topBar.signal_menu_toggle.connect(
             lambda checked: handle_toggle_menu(self, checked))
-    
+
     def handle_videoWidget_signal(self):
-        self.widget_videoWidget.signal_track_paused.connect(handle_track_paused)
-        self.widget_videoWidget.signal_track_played.connect(handle_track_played)
-        self.widget_videoWidget.signal_track_stopped.connect(handle_track_stopped)
-        
+        # self.widget_videoWidget.signal_track_paused.connect(
+        #     handle_track_paused)
+        self.widget_videoWidget.signal_track_played.connect(lambda position_current, duration: handle_track_played(
+            self.widget_playBar, position_current, duration, self.dict_player_states, self.dict_song_entity))
+        # self.widget_videoWidget.signal_track_stopped.connect(
+        #     handle_track_stopped)
+        self.widget_videoWidget.signal_position_changed.connect(
+            lambda position_current: handle_track_position_changed(self.widget_playBar, position_current))
 
     def initialize_layout(self):
         self.gridLayout_2 = QGridLayout(self.widget_centralWidget)
