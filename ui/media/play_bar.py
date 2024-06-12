@@ -4,9 +4,8 @@ from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QPushButton, QSizePo
                                QVBoxLayout, QLCDNumber)
 import os
 from config.style_manager import STYLE_PLAY_BAR
-from config.image_manager import (IMAGE_LOGO, IMAGE_BACKWARD, IMAGE_CYCLE,
-                                  IMAGE_FORWARD, IMAGE_NEXT, IMAGE_PAUSE, IMAGE_PLAY,
-                                  IMAGE_PREV, IMAGE_VOLUME)
+from config.image_manager import *
+from config.default_parameters import *
 IMAGE_DIR = os.path.join(os.path.dirname(__file__),
                          f'../../resource/images')
 STYLE_DIR = os.path.join(os.path.dirname(__file__),
@@ -20,10 +19,10 @@ class PlayBar(QFrame):
     signal_btn_play_pause_clicked = Signal()
     signal_btn_next_clicked = Signal()
     signal_btn_forward_clicked = Signal()
-    signal_slider_progress_changed = Signal()
-    signal_play_order_clicked = Signal()
-    signal_volume_clicked = Signal()
-    signal_slider_volume_changed = Signal()
+    signal_slider_progress_changed = Signal(int)
+    signal_btn_play_order_clicked = Signal()
+    signal_btn_volume_clicked = Signal()
+    signal_slider_volume_changed = Signal(int)
 
     def __init__(self, centralWidget):
         super().__init__(centralWidget)
@@ -48,13 +47,24 @@ class PlayBar(QFrame):
         # configure display text
         self.configure_parameters()
 
-
         # emit signals
         self.emit_signal()
-        
+
     def emit_signal(self):
-        self.btn_spinning_bocchi.clicked.connect(self.signal_btn_spinning_bocchi_clicked)
+        self.btn_spinning_bocchi.clicked.connect(
+            self.signal_btn_spinning_bocchi_clicked)
         self.btn_play_pause.clicked.connect(self.signal_btn_play_pause_clicked)
+        self.btn_backward.clicked.connect(self.signal_btn_backward_clicked)
+        self.btn_forward.clicked.connect(self.signal_btn_forward_clicked)
+        self.btn_prev.clicked.connect(self.signal_btn_prev_clicked)
+        self.btn_next.clicked.connect(self.signal_btn_next_clicked)
+        self.btn_volume.clicked.connect(self.signal_btn_volume_clicked)
+        self.btn_play_order.clicked.connect(self.signal_btn_play_order_clicked)
+        self.slider_progress.valueChanged.connect(
+            lambda: self.signal_slider_progress_changed.emit(self.slider_progress.value()))
+        self.slider_volume.valueChanged.connect(
+            lambda: self.signal_slider_volume_changed.emit(self.slider_volume.value()))
+        
 
     def initalize_components(self):
         self.initialize_button_thumbnail()
@@ -119,18 +129,19 @@ class PlayBar(QFrame):
             self.horizontalSpacer_center_bottom_left)
 
     def initialize_slider_volume(self):
-        self.slide_volume = QSlider(self)
-        self.slide_volume.setObjectName('slide_volume')
+        self.slider_volume = QSlider(self)
+        self.slider_volume.setObjectName('slider_volume')
         sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Minimum,
                                   QSizePolicy.Policy.Fixed)
         sizePolicy4.setHeightForWidth(
-            self.slide_volume.sizePolicy().hasHeightForWidth())
-        self.slide_volume.setSizePolicy(sizePolicy4)
-        self.slide_volume.setCursor(QCursor(Qt.PointingHandCursor))
-        self.slide_volume.setValue(99)
-        self.slide_volume.setOrientation(Qt.Vertical)
+            self.slider_volume.sizePolicy().hasHeightForWidth())
+        self.slider_volume.setSizePolicy(sizePolicy4)
+        self.slider_volume.setCursor(QCursor(Qt.PointingHandCursor))
+        self.slider_volume.setRange(0, 100)
+        self.slider_volume.setValue(100)
+        self.slider_volume.setOrientation(Qt.Vertical)
 
-        self.horizontalLayout_whole.addWidget(self.slide_volume)
+        self.horizontalLayout_whole.addWidget(self.slider_volume)
 
     def initialize_button_volume(self):
         self.btn_volume = QPushButton(self)
@@ -152,7 +163,15 @@ class PlayBar(QFrame):
         self.btn_play_order.setSizePolicy(sizePolicy4)
         self.btn_play_order.setCursor(QCursor(Qt.PointingHandCursor))
         icon13 = QIcon()
-        icon13.addFile(IMAGE_CYCLE, QSize(), QIcon.Normal, QIcon.Off)
+        file_path = None
+        if DEFAULT_LIST_PLAY_ORDER[DEFAULT_PLAY_ORDER] == DEAFULT_PLAY_ORDER_LOOPS:
+            file_path = IMAGE_LOOP
+        elif DEFAULT_LIST_PLAY_ORDER[DEFAULT_PLAY_ORDER] == DEFAULT_PLAY_ORDER_CYCLE:
+            file_path = IMAGE_CYCLE
+        elif DEFAULT_LIST_PLAY_ORDER[DEFAULT_PLAY_ORDER] == DEFAULT_PLAY_ORDER_SHUFFLE: 
+            file_path = IMAGE_SHUFFLE
+            
+        icon13.addFile(file_path, QSize(), QIcon.Normal, QIcon.Off)
         self.btn_play_order.setIcon(icon13)
 
         self.horizontalLayout_whole.addWidget(self.btn_play_order)
@@ -221,7 +240,7 @@ class PlayBar(QFrame):
         self.slider_progress.setMinimumSize(QSize(0, 20))
         self.slider_progress.setCursor(QCursor(Qt.PointingHandCursor))
         self.slider_progress.setOrientation(Qt.Horizontal)
-        
+
         self.verticalLayout_center_section.addWidget(self.slider_progress)
 
     def initialize_label_track_title(self):
@@ -251,7 +270,7 @@ class PlayBar(QFrame):
 
         # Simulate starting the song at 00:00
         self.current_time = QTime(0, 0, 0)
-        self.current_time.setHMS(0,0,1000)
+        self.current_time.setHMS(0, 0, 1000)
 
     def initialize_button_thumbnail(self):
         self.btn_spinning_bocchi = QPushButton(self)

@@ -32,7 +32,7 @@ class MainWindow(QMainWindow):
         # initialization
         super().__init__()
         initialize_external()
-        self.initializae_variables()
+        self.initialize_variables()
 
         self.setObjectName('main_window')
         self.setWindowTitle('Bocchi Music')
@@ -76,7 +76,23 @@ class MainWindow(QMainWindow):
         self.widget_playBar.signal_btn_spinning_bocchi_clicked.connect(
             lambda: handle_spinning_bocchi_clicked(self.widget_pageManager, self.widget_videoWidget))
         self.widget_playBar.signal_btn_play_pause_clicked.connect(
-            lambda: handle_player(self, self.dict_player_states[KEY_DICT_PLAYER_STATES_ROW]))
+            lambda: handle_player(self, self.dict_player_states.get(KEY_DICT_PLAYER_STATES_ROW, 0)))
+        self.widget_playBar.signal_btn_backward_clicked.connect(
+            lambda: handle_backward(self.widget_videoWidget.player))
+        self.widget_playBar.signal_btn_forward_clicked.connect(
+            lambda: handle_forward(self.widget_videoWidget.player))
+        self.widget_playBar.signal_btn_next_clicked.connect(lambda: handle_next(
+            self, self.dict_song_entity, self.dict_player_states))
+        self.widget_playBar.signal_btn_prev_clicked.connect(
+            lambda: handle_prev(self, self.dict_song_entity, self.dict_player_states))
+        self.widget_playBar.signal_btn_volume_clicked.connect(lambda: handle_mute(
+            self.widget_videoWidget.player, self.widget_playBar.btn_volume))
+        self.widget_playBar.signal_slider_volume_changed.connect(
+            lambda value: handle_slider_volume_changed(self.widget_videoWidget.player, value))
+        self.widget_playBar.signal_slider_progress_changed.connect(
+            lambda value: handle_slider_progress_changed(self.widget_videoWidget.player, value))
+        self.widget_playBar.signal_btn_play_order_clicked.connect(lambda: handle_play_order(
+            self.widget_playBar.btn_play_order, self.dict_player_states))
 
     def handle_PageManager_signal(self):
         self.handle_page_library_signal()
@@ -112,6 +128,8 @@ class MainWindow(QMainWindow):
         #     handle_track_stopped)
         self.widget_videoWidget.signal_position_changed.connect(
             lambda position_current: handle_track_position_changed(self.widget_playBar, position_current))
+        self.widget_videoWidget.signal_end_of_media.connect(lambda: handle_end_of_media(
+            self.widget_page_library.table_song, self.widget_playBar, self.widget_videoWidget.player, self.dict_player_states, self.dict_song_entity))
 
     def initialize_layout(self):
         self.gridLayout_2 = QGridLayout(self.widget_centralWidget)
@@ -155,9 +173,12 @@ class MainWindow(QMainWindow):
         icon.addFile(IMAGE_LOGO, QSize(), QIcon.Normal, QIcon.Off)
         self.setWindowIcon(icon)
 
-    def initializae_variables(self):
+    def initialize_variables(self):
         self.dict_song_entity = generate_dict_song_entity()
-        self.dict_player_states = {}
+        self.dict_player_states = {
+            KEY_DICT_PLAYER_STATES_PLAY_ORDER: DEFAULT_PLAY_ORDER,
+
+        }
 
     def apply_stylesheet(self):
         stylesheet_path = os.path.join(STYLE_DIR, STYLE_MAIN_WINDOW)
