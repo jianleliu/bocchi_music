@@ -89,10 +89,13 @@ class MainWindow(QMainWindow):
             self.widget_videoWidget.player, self.widget_playBar.btn_volume))
         self.widget_playBar.signal_slider_volume_changed.connect(
             lambda value: handle_slider_volume_changed(self.widget_videoWidget.player, value))
-        self.widget_playBar.signal_slider_progress_changed.connect(
-            lambda value: handle_slider_progress_changed(self.widget_videoWidget.player, value))
+        self.widget_playBar.signal_slider_progress_pressed.connect(
+            lambda: handle_slider_progress_pressed(self.widget_videoWidget))
+        self.widget_playBar.signal_slider_progress_released.connect(
+            lambda value: handle_slider_progress_released(self.widget_videoWidget, self.widget_playBar, value))
         self.widget_playBar.signal_btn_play_order_clicked.connect(lambda: handle_play_order(
             self.widget_playBar.btn_play_order, self.dict_player_states))
+
 
     def handle_PageManager_signal(self):
         self.handle_page_library_signal()

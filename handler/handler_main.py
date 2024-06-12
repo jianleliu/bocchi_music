@@ -126,7 +126,7 @@ def handle_next(main_window, song_entity, state):
     row_next = (state[KEY_DICT_PLAYER_STATES_ROW] + 1) % len(song_entity)
     if state[KEY_DICT_PLAYER_STATES_PLAY_ORDER] == DEFAULT_PLAY_ORDER_SHUFFLE:
         row_next = randint(0, len(song_entity) - 1)
-    
+
     handle_player(main_window, row_next)
 
 
@@ -148,8 +148,14 @@ def handle_slider_volume_changed(player, value):
     player.audioOutput().setVolume(value/100)
 
 
-def handle_slider_progress_changed(player, value):
-    player.setPosition(value * 1000)
+def handle_slider_progress_released(widget_videoWidget, widget_playBar, value):
+    widget_videoWidget.player.setPosition(value * 1000)
+    widget_videoWidget.signal_position_changed.connect(
+        lambda position_current: handle_track_position_changed(widget_playBar, position_current))
+
+
+def handle_slider_progress_pressed(widget_videoWidget):
+    widget_videoWidget.signal_position_changed.disconnect()
 
 
 def handle_play_order(btn_play_order, state):
@@ -180,15 +186,16 @@ def handle_play_order(btn_play_order, state):
 def handle_end_of_media(table_song, widget_playBar, player, state, song_entity):
     if state[KEY_DICT_PLAYER_STATES_PLAY_ORDER] == DEAFULT_PLAY_ORDER_LOOPS:
         _switch_song(table_song, widget_playBar, state, song_entity,
-                   state[KEY_DICT_PLAYER_STATES_ROW], player)
+                     state[KEY_DICT_PLAYER_STATES_ROW], player)
     elif state[KEY_DICT_PLAYER_STATES_PLAY_ORDER] == DEFAULT_PLAY_ORDER_CYCLE:
         new_row = (state[KEY_DICT_PLAYER_STATES_ROW] + 1) % len(song_entity)
         _switch_song(table_song, widget_playBar, state, song_entity,
-                   new_row, player)
+                     new_row, player)
     elif state[KEY_DICT_PLAYER_STATES_PLAY_ORDER] == DEFAULT_PLAY_ORDER_SHUFFLE:
         new_row = randint(0, len(song_entity) - 1)
         _switch_song(table_song, widget_playBar, state, song_entity,
-                   new_row, player)
+                     new_row, player)
+
 
 def _play_song(table_song: QTableWidget, widget_playBar, state: dict, song_entity: dict, row: int, player: QMediaPlayer):
     icon = QTableWidgetItem()

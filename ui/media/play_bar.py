@@ -19,7 +19,8 @@ class PlayBar(QFrame):
     signal_btn_play_pause_clicked = Signal()
     signal_btn_next_clicked = Signal()
     signal_btn_forward_clicked = Signal()
-    signal_slider_progress_changed = Signal(int)
+    signal_slider_progress_released = Signal(int)
+    signal_slider_progress_pressed = Signal()
     signal_btn_play_order_clicked = Signal()
     signal_btn_volume_clicked = Signal()
     signal_slider_volume_changed = Signal(int)
@@ -60,11 +61,12 @@ class PlayBar(QFrame):
         self.btn_next.clicked.connect(self.signal_btn_next_clicked)
         self.btn_volume.clicked.connect(self.signal_btn_volume_clicked)
         self.btn_play_order.clicked.connect(self.signal_btn_play_order_clicked)
-        self.slider_progress.valueChanged.connect(
-            lambda: self.signal_slider_progress_changed.emit(self.slider_progress.value()))
+        self.slider_progress.sliderPressed.connect(
+            self.signal_slider_progress_pressed)
+        self.slider_progress.sliderReleased.connect(
+            lambda: self.signal_slider_progress_released.emit(self.slider_progress.value()))
         self.slider_volume.valueChanged.connect(
             lambda: self.signal_slider_volume_changed.emit(self.slider_volume.value()))
-        
 
     def initalize_components(self):
         self.initialize_button_thumbnail()
@@ -164,13 +166,15 @@ class PlayBar(QFrame):
         self.btn_play_order.setCursor(QCursor(Qt.PointingHandCursor))
         icon13 = QIcon()
         file_path = None
-        if DEFAULT_LIST_PLAY_ORDER[DEFAULT_PLAY_ORDER] == DEAFULT_PLAY_ORDER_LOOPS:
-            file_path = IMAGE_LOOP
-        elif DEFAULT_LIST_PLAY_ORDER[DEFAULT_PLAY_ORDER] == DEFAULT_PLAY_ORDER_CYCLE:
-            file_path = IMAGE_CYCLE
-        elif DEFAULT_LIST_PLAY_ORDER[DEFAULT_PLAY_ORDER] == DEFAULT_PLAY_ORDER_SHUFFLE: 
-            file_path = IMAGE_SHUFFLE
-            
+        PLAY_ORDERS = [
+            (DEAFULT_PLAY_ORDER_LOOPS, IMAGE_LOOP),
+            (DEFAULT_PLAY_ORDER_CYCLE, IMAGE_CYCLE),
+            (DEFAULT_PLAY_ORDER_SHUFFLE, IMAGE_SHUFFLE)
+        ]
+        current_play_order = DEFAULT_PLAY_ORDER
+        current_index = [order[0]
+                     for order in PLAY_ORDERS].index(current_play_order)
+        _ , file_path = PLAY_ORDERS[current_index]
         icon13.addFile(file_path, QSize(), QIcon.Normal, QIcon.Off)
         self.btn_play_order.setIcon(icon13)
 
