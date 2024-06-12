@@ -5,7 +5,7 @@ from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QPushButton, QSizePo
 import os
 from config.style_manager import STYLE_PLAY_BAR
 from config.image_manager import (IMAGE_LOGO, IMAGE_BACKWARD, IMAGE_CYCLE,
-                                  IMAGE_FORWARD, IMAGE_NEXT, IMAGE_PAUSE,
+                                  IMAGE_FORWARD, IMAGE_NEXT, IMAGE_PAUSE, IMAGE_PLAY,
                                   IMAGE_PREV, IMAGE_VOLUME)
 IMAGE_DIR = os.path.join(os.path.dirname(__file__),
                          f'../../resource/images')
@@ -54,7 +54,7 @@ class PlayBar(QFrame):
         
     def emit_signal(self):
         self.btn_spinning_bocchi.clicked.connect(self.signal_btn_spinning_bocchi_clicked)
-        # self.slider_progress.setRange
+        self.btn_play_pause.clicked.connect(self.signal_btn_play_pause_clicked)
 
     def initalize_components(self):
         self.initialize_button_thumbnail()
@@ -188,9 +188,9 @@ class PlayBar(QFrame):
         self.btn_play_pause = QPushButton(self)
         self.btn_play_pause.setObjectName('btn_play_pause')
         self.btn_play_pause.setCursor(QCursor(Qt.PointingHandCursor))
-        icon10 = QIcon()
-        icon10.addFile(IMAGE_PAUSE, QSize(), QIcon.Normal, QIcon.Off)
-        self.btn_play_pause.setIcon(icon10)
+        icon_play_pause = QIcon()
+        icon_play_pause.addFile(IMAGE_PLAY, QSize(), QIcon.Normal, QIcon.Off)
+        self.btn_play_pause.setIcon(icon_play_pause)
 
         self.horizontalLayout_center_bottom.addWidget(self.btn_play_pause)
 

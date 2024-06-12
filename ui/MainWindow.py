@@ -75,6 +75,8 @@ class MainWindow(QMainWindow):
     def handle_playBar_signal(self):
         self.widget_playBar.signal_btn_spinning_bocchi_clicked.connect(
             lambda: handle_spinning_bocchi_clicked(self.widget_pageManager, self.widget_videoWidget))
+        self.widget_playBar.signal_btn_play_pause_clicked.connect(
+            lambda: handle_player(self, self.dict_player_states[KEY_DICT_PLAYER_STATES_ROW]))
 
     def handle_PageManager_signal(self):
         self.handle_page_library_signal()
