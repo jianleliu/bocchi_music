@@ -52,9 +52,7 @@ class PageManager(QStackedWidget):
             self.setCurrentWidget(page)
 
     def apply_stylesheet(self):
-        stylesheet_path = os.path.join(STYLE_DIR, STYLE_CENTER)
-
-        with open(stylesheet_path, 'r') as file:
+        with open(STYLE_CENTER, 'r') as file:
             stylesheet = file.read()
             self.setStyleSheet(stylesheet)
 

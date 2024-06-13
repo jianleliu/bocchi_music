@@ -161,8 +161,6 @@ class SideShrinked(QFrame):
         self.verticalLayout_3.addWidget(self.btn_settings_1)
 
     def apply_stylesheet(self):
-        stylesheet_path = os.path.join(STYLE_DIR, STYLE_SIDE_SHRINKED)
-
-        with open(stylesheet_path, "r") as file:
+        with open(STYLE_SIDE_SHRINKED, "r") as file:
             stylesheet = file.read()
             self.setStyleSheet(stylesheet)

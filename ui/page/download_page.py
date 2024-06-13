@@ -155,9 +155,7 @@ class DownloadPage(QFrame):
         self.verticalLayout_24.addLayout(self.horizontalLayout_7)
 
     def apply_stylesheet(self):
-        stylesheet_path = os.path.join(STYLE_DIR, STYLE_DOWNLOAD_PAGE)
-
-        with open(stylesheet_path, 'r') as file:
+        with open(STYLE_DOWNLOAD_PAGE, 'r') as file:
             stylesheet = file.read()
             self.setStyleSheet(stylesheet)
 

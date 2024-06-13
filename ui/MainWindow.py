@@ -184,8 +184,6 @@ class MainWindow(QMainWindow):
         }
 
     def apply_stylesheet(self):
-        stylesheet_path = os.path.join(STYLE_DIR, STYLE_MAIN_WINDOW)
-
-        with open(stylesheet_path, "r") as file:
+        with open(STYLE_MAIN_WINDOW, "r") as file:
             stylesheet = file.read()
             self.setStyleSheet(stylesheet)

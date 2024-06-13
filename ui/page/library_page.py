@@ -94,9 +94,7 @@ class LibraryPage(QFrame):
         self.gridLayout_3.addWidget(self.table_song, 1, 0, 1, 2)
 
     def apply_stylesheet(self):
-        stylesheet_path = os.path.join(STYLE_DIR, STYLE_LIBRARY_PAGE)
-
-        with open(stylesheet_path, 'r') as file:
+        with open(STYLE_LIBRARY_PAGE, 'r') as file:
             stylesheet = file.read()
             self.setStyleSheet(stylesheet)
 

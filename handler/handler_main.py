@@ -198,10 +198,15 @@ def handle_end_of_media(table_song, widget_playBar, player, state, song_entity):
 
 
 def _play_song(table_song: QTableWidget, widget_playBar, state: dict, song_entity: dict, row: int, player: QMediaPlayer):
+    # update table_song icon
     icon = QTableWidgetItem()
     icon.setIcon(QPixmap(IMAGE_PAUSE))
-    widget_playBar.btn_play_pause.setIcon(QIcon(IMAGE_PAUSE))
     table_song.setVerticalHeaderItem(row, icon)
+    
+    # update playbar
+    widget_playBar.btn_play_pause.setIcon(QIcon(IMAGE_PAUSE))
+    
+    # read value
     state[KEY_DICT_PLAYER_STATES_ROW] = row
     config.read(INI_FILE_PATH)
 
@@ -211,43 +216,57 @@ def _play_song(table_song: QTableWidget, widget_playBar, state: dict, song_entit
         dir_song, song_entity[row][KEY_DICT_SONG_ENTITY_BASENAME])
     player.setSource(QUrl.fromLocalFile(file_path))
     player.play()
+    
+    # update state values
     state[KEY_DICT_PLAYER_STATES_PATH] = file_path
     state[KEY_DICT_PLAYER_STATES_STATE] = STATE_PLAY
 
 
 def _continue_song(table_song: QTableWidget, widget_playBar, state: dict, song_entity: dict, row: int, player: QMediaPlayer):
-    print('resume song')
+    # update table_song icon
     icon = QTableWidgetItem()
     icon.setIcon(QPixmap(IMAGE_PAUSE))
-    widget_playBar.btn_play_pause.setIcon(QIcon(IMAGE_PAUSE))
-    state[KEY_DICT_PLAYER_STATES_STATE] = STATE_PLAY
     table_song.setVerticalHeaderItem(row, icon)
-    state[KEY_DICT_PLAYER_STATES_ROW] = row
-
+    
+    
+    # update playbar
+    widget_playBar.btn_play_pause.setIcon(QIcon(IMAGE_PAUSE))
+    
+    # start player and update value
     player.play()
+    state[KEY_DICT_PLAYER_STATES_STATE] = STATE_PLAY
+    state[KEY_DICT_PLAYER_STATES_ROW] = row
 
 
 def _pause_song(table_song: QTableWidget, widget_playBar, state: dict, song_entity: dict, row: int, player: QMediaPlayer):
+    # update table_song
     icon = QTableWidgetItem()
     icon.setIcon(QPixmap(IMAGE_PLAY))
-    widget_playBar.btn_play_pause.setIcon(QIcon(IMAGE_PLAY))
-    state[KEY_DICT_PLAYER_STATES_STATE] = STATE_PAUSE
     table_song.setVerticalHeaderItem(row, icon)
-    state[KEY_DICT_PLAYER_STATES_ROW] = row
+    
+    # update playbar
+    widget_playBar.btn_play_pause.setIcon(QIcon(IMAGE_PLAY))
+    
+    # start player and update value
     player.pause()
+    state[KEY_DICT_PLAYER_STATES_STATE] = STATE_PAUSE
+    state[KEY_DICT_PLAYER_STATES_ROW] = row
 # will run IF a new song is going to be played WHILE there is a ongoing song.
 
 
 def _switch_song(table_song: QTableWidget, widget_playBar, state: dict, song_entity: dict, row: int, player: QMediaPlayer):
     #  current song
-    print('switch song')
     icon = QTableWidgetItem()
     icon.setIcon(QPixmap(IMAGE_PLAY))
-    widget_playBar.btn_play_pause.setIcon(QIcon(IMAGE_PLAY))
     table_song.setVerticalHeaderItem(state[KEY_DICT_PLAYER_STATES_ROW], icon)
-    state[KEY_DICT_PLAYER_STATES_STATE] = STATE_STOP
+    
+    
+    widget_playBar.btn_play_pause.setIcon(QIcon(IMAGE_PLAY))
+    widget_playBar.angle = 0
+    
     # stop the current song
     player.stop()
     time.sleep(0.01)
 
+    state[KEY_DICT_PLAYER_STATES_STATE] = STATE_STOP
     _play_song(table_song, widget_playBar, state, song_entity, row, player)

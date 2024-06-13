@@ -1,15 +1,11 @@
 from PySide6.QtCore import (QSize, Qt, QTimer, QTime, Signal)
-from PySide6.QtGui import (QCursor, QIcon)
+from PySide6.QtGui import (QCursor, QIcon, QPixmap, QPainter, QTransform)
 from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QPushButton, QSizePolicy, QSlider, QSpacerItem,
                                QVBoxLayout, QLCDNumber)
 import os
 from config.style_manager import STYLE_PLAY_BAR
 from config.image_manager import *
 from config.default_parameters import *
-IMAGE_DIR = os.path.join(os.path.dirname(__file__),
-                         f'../../resource/images')
-STYLE_DIR = os.path.join(os.path.dirname(__file__),
-                         f'../../resource/style')
 
 
 class PlayBar(QFrame):
@@ -260,24 +256,11 @@ class PlayBar(QFrame):
         self.label_current_timestamp.setObjectName('current_timestamp')
 
         self.horizontalLayout_whole.addWidget(self.label_current_timestamp)
-
-    def initialize_lcd_current_timestamp(self):
-        self.lcd_current_timestamp = QLCDNumber(self)
-        self.lcd_current_timestamp.setDigitCount(5)
-
-        self.horizontalLayout_whole.addWidget(self.lcd_current_timestamp)
-
-        # Set up a timer to update the timestamp every second
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.update_time)
-        self.timer.start(1000)  # Update every second
-
-        # Simulate starting the song at 00:00
-        self.current_time = QTime(0, 0, 0)
-        self.current_time.setHMS(0, 0, 1000)
-
+        
     def initialize_button_thumbnail(self):
         self.btn_spinning_bocchi = QPushButton(self)
+        
+
         self.btn_spinning_bocchi.setObjectName('thumbnail')
         sizePolicy8 = QSizePolicy(QSizePolicy.Policy.Expanding,
                                   QSizePolicy.Policy.Expanding)
@@ -287,18 +270,15 @@ class PlayBar(QFrame):
         self.btn_spinning_bocchi.setMinimumSize(QSize(50, 50))
         self.btn_spinning_bocchi.setMaximumSize(QSize(100, 100))
         self.btn_spinning_bocchi.setSizeIncrement(QSize(5, 5))
-        icon = QIcon()
-        icon.addFile(IMAGE_LOGO, QSize(), QIcon.Normal, QIcon.Off)
-        self.btn_spinning_bocchi.setIcon(icon)
-        self.btn_spinning_bocchi.setIconSize(QSize(100, 100))
+        self.btn_spinning_bocchi.setIcon(QPixmap(IMAGE_LOGO))
+        self.btn_spinning_bocchi.setIconSize(QSize(75, 75))
         self.btn_spinning_bocchi.setCheckable(True)
 
         self.horizontalLayout_whole.addWidget(self.btn_spinning_bocchi)
 
-    def apply_stylesheet(self):
-        stylesheet_path = os.path.join(STYLE_DIR, STYLE_PLAY_BAR)
 
-        with open(stylesheet_path, 'r') as file:
+    def apply_stylesheet(self):
+        with open(STYLE_PLAY_BAR, 'r') as file:
             stylesheet = file.read()
             self.setStyleSheet(stylesheet)
 

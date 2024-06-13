@@ -5,17 +5,18 @@ QFrame > * {
 }
 
 QPushButton{
-    border: 1px solid transparent;
+  border: 1px solid transparent;
 	text-align: center;
 }
 
 QPushButton:hover {
 	text-decoration: underline;
+	background-color: #7cd2e1;
 }
 
 QPushButton:pressed {
     border-radius: 5px;
-    background-color: #8ad0dd;
+    background-color: #6abfce;
     border-style: inset;
 }
 

@@ -167,9 +167,7 @@ class SideExpanded(QFrame):
         self.verticalLayout_5.addLayout(self.verticalLayout_2)
 
     def apply_stylesheet(self):
-        stylesheet_path = os.path.join(STYLE_DIR, STYLE_SIDE_EXPANDED)
-
-        with open(stylesheet_path, 'r') as file:
+        with open(STYLE_SIDE_EXPANDED, 'r') as file:
             stylesheet = file.read()
             self.setStyleSheet(stylesheet)
 
