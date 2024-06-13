@@ -11,9 +11,10 @@ import time
 import math
 from config.keys import *
 from config.image_manager import *
-from config.states import *
 from config.sections import *
 from config.default_parameters import *
+from config.states import *
+from session.session_data import session_data
 from configparser import ConfigParser
 from random import randint
 
@@ -46,27 +47,27 @@ def handle_populate_table_song(table_song: QTableWidgetItem, dict_song: dict) ->
 
 
 def handle_player(main_window, row):
-    state = main_window.dict_player_states
+    state = session_data.dict_player_states
     player = main_window.widget_videoWidget.player
     # play a new song when no song is playing
     if 'row' not in state:
         _play_song(main_window.widget_page_library.table_song, main_window.widget_playBar,
-                   state, main_window.dict_song_entity, row, player)
+                   state, session_data.dict_song_entity, row, player)
         return
     elif (state[KEY_DICT_PLAYER_STATES_STATE] == STATE_PAUSE) and (state[KEY_DICT_PLAYER_STATES_ROW] == row):
         print('continue song')
         _continue_song(main_window.widget_page_library.table_song, main_window.widget_playBar,
-                       state, main_window.dict_song_entity, row, player)
+                       state, session_data.dict_song_entity, row, player)
         return
     # pause current song
     if (state[KEY_DICT_PLAYER_STATES_STATE] == STATE_PLAY) and (state[KEY_DICT_PLAYER_STATES_ROW] == row):
         print('pause song')
         _pause_song(main_window.widget_page_library.table_song, main_window.widget_playBar,
-                    state, main_window.dict_song_entity, row, player)
+                    state, session_data.dict_song_entity, row, player)
     else:
         print('switch song')
         _switch_song(main_window.widget_page_library.table_song, main_window.widget_playBar,
-                     state, main_window.dict_song_entity, row, player)
+                     state, session_data.dict_song_entity, row, player)
 
 
 def handle_spinning_bocchi_clicked(widget_pageManger: QStackedWidget, widget_videoWidget: QVideoWidget):

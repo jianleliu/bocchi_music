@@ -7,7 +7,7 @@ from PySide6.QtWidgets import (QCheckBox, QFrame, QGridLayout,
 import os
 from config.style_manager import STYLE_DOWNLOAD_PAGE
 from config.image_manager import IMAGE_DOWNLOAD_BTN_2
-from handler.handler_page_download import handle_download_track
+from handler.handler_page_download import *
 
 IMAGE_DIR = os.path.join(os.path.dirname(__file__),
                          f'../../resource/images')
@@ -16,7 +16,11 @@ STYLE_DIR = os.path.join(os.path.dirname(__file__),
 
 
 class DownloadPage(QFrame):
-    signal_download = Signal
+    signal_download = Signal()
+    signal_repopulate_table_song = Signal()
+    # signal_check_audio_only = Signal(bool)
+    # signal_check_use_default_path = Signal(bool)
+    # signal_check_include_thumbnail = Signal(bool)
 
     def __init__(self):
         super().__init__()
@@ -51,7 +55,12 @@ class DownloadPage(QFrame):
         self.btn_advanced.toggled.connect(
             lambda: self.advanced_widget.setHidden(not self.advanced_widget.isHidden()))
         self.btn_download.clicked.connect(
-            lambda: handle_download_track(self, self.url_search_bar.text()))
+            lambda: handle_download_track(self, self.url_search_bar.text(), self.signal_repopulate_table_song))
+        self.check_audio_only.stateChanged.connect(
+            lambda: handle_check_audio_only(self.check_audio_only.isChecked()))
+        self.check_use_default_path.stateChanged.connect(
+            lambda: handle_check_use_default_path(self.check_use_default_path.isChecked()))
+    
 
     def emit_signal(self):
         pass
@@ -95,14 +104,6 @@ class DownloadPage(QFrame):
 
         self.gridLayout.addWidget(self.check_use_default_path, 1, 0, 1, 1)
 
-        # thumbnail check
-        self.check_include_thumbnail = QCheckBox(self.advanced_widget)
-        self.check_include_thumbnail.setObjectName(u"check_include_thumbnail")
-        self.check_include_thumbnail.setEnabled(False)
-        self.check_include_thumbnail.setChecked(True)
-
-        self.gridLayout.addWidget(self.check_include_thumbnail, 0, 1, 1, 1)
-
         self.verticalLayout_24.addWidget(self.advanced_widget)
 
     def initialize_search_bar(self):
@@ -117,24 +118,6 @@ class DownloadPage(QFrame):
         # self.url_search_bar.setStyleSheet(u"border-bottom: 1px solid;")
 
         self.horizontalLayout_7.addWidget(self.url_search_bar)
-
-        # radio options
-        self.verticalLayout_23 = QVBoxLayout()
-        self.verticalLayout_23.setObjectName(u"verticalLayout_23")
-        self.radio_song = QRadioButton(self)
-        self.radio_song.setObjectName(u"radio_song")
-        self.radio_song.setMinimumSize(QSize(0, 15))
-        self.radio_song.setChecked(True)
-
-        self.verticalLayout_23.addWidget(self.radio_song)
-
-        self.radio_playlist = QRadioButton(self)
-        self.radio_playlist.setObjectName(u"radio_playlist")
-        self.radio_playlist.setMinimumSize(QSize(0, 15))
-
-        self.verticalLayout_23.addWidget(self.radio_playlist)
-
-        self.horizontalLayout_7.addLayout(self.verticalLayout_23)
 
         # download button
         self.btn_download = QPushButton(self)
@@ -160,11 +143,8 @@ class DownloadPage(QFrame):
             self.setStyleSheet(stylesheet)
 
     def configure_parameters(self):
-        self.url_search_bar.setPlaceholderText('URL')
-        self.radio_song.setText('Song')
-        self.radio_playlist.setText('Playlist')
+        self.url_search_bar.setPlaceholderText('YouTube URL: song or playlist')
         self.btn_advanced.setText('Advanced')
         self.check_audio_only.setText('Audio Only')
         self.check_use_default_path.setText('Use Default Path')
-        self.check_include_thumbnail.setText('Include Thumbnail')
         self.status_box.setText('...')

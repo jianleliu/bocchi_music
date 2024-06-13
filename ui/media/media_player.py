@@ -30,13 +30,9 @@ class VideoWidget(QVideoWidget):
         self.audio_output = QAudioOutput()
         self.player.setAudioOutput(self.audio_output)
 
-        # Play the video
-        # self.player.setLoops(DEFAULT_LOOPS)
         self.hide()
         self.emit_signal()
         self.signal_internal()        
-        # self.player.audioOutput().setVolume()
-        # self.player.play()
 
     def emit_signal(self):
         self.player.playbackStateChanged.connect(
