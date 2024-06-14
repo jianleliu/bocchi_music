@@ -174,6 +174,6 @@ class SideExpanded(QFrame):
     def configure_parameters(self):
         self.btn_home_2.setText('Home')
         self.btn_library_2.setText('Library')
-        self.btn_playlist_2.setText('Library')
+        self.btn_playlist_2.setText('Playlist')
         self.btn_download_2.setText('Download')
         self.btn_settings_2.setText('Settings')

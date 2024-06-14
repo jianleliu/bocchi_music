@@ -12,10 +12,10 @@ DEFAULT_PLAYLIST_DOWNLOAD_DIR = os.path.join(
     os.path.dirname(os.path.dirname(__file__)), 'song')
 
 # download page
-DEFAULT_CHECK_AUDIO_ONLY = True
+DEFAULT_CHECK_AUDIO_ONLY = False
 DEFAULT_CHECK_USE_DEFAULT_PATH = True
 DEFAULT_CHECK_INCLUDE_THUMBNAIL = True
-
+DEFAULT_DOWNLOAD_FORMAT = 'mp4'
 # ini file
 INI_FILE_PATH = os.path.join(os.path.join(DIR_ROOT, 'config'), 'config.ini')
 DEFAULT_INI_DICT = {

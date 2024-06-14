@@ -1,7 +1,7 @@
-from PySide6.QtWidgets import QApplication
 import sys
+
 # this has to be instantiated before any widgets instance.
-app = QApplication(sys.argv)
+from app import app
 from ui.MainWindow import MainWindow
 
 

@@ -57,6 +57,8 @@ class LibraryPage(QFrame):
                                             QSizePolicy.Policy.Minimum)
 
         self.gridLayout_3.addItem(self.horizontalSpacer, 0, 0, 1, 1)
+        
+        # self.btn_populate_song = QPushButton()
 
         self.btn_shuffle = QPushButton(self)
         self.btn_shuffle.setObjectName(u"btn_shuffle")
@@ -86,7 +88,7 @@ class LibraryPage(QFrame):
         self.table_song.setLineWidth(1)
         self.table_song.setDragDropOverwriteMode(False)
         self.table_song.setAlternatingRowColors(True)
-        self.table_song.setSortingEnabled(True)
+        self.table_song.setSortingEnabled(False)
         self.table_song.setWordWrap(True)
         self.table_song.setRowCount(0)
         self.table_song.setColumnCount(6)
