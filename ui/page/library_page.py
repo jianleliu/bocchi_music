@@ -18,7 +18,8 @@ STYLE_DIR = os.path.join(os.path.dirname(__file__),
 class LibraryPage(QFrame):
     signal_populate_table_song = Signal()
     signal_play_pause_clicked = Signal(int)
-
+    signal_btn_shuffle_clicked = Signal()
+    signal_btn_library_populate_clicked = Signal()
     def __init__(self):
         super().__init__()
         self.setObjectName('library_page')
@@ -41,6 +42,8 @@ class LibraryPage(QFrame):
     def emit_signal(self):
         self.table_song.verticalHeader().sectionClicked.connect(
             lambda row: self.signal_play_pause_clicked.emit(row))
+        self.btn_shuffle.clicked.connect(self.signal_btn_shuffle_clicked)
+        self.btn_library_populate.clicked.connect(self.signal_btn_library_populate_clicked)
 
     def showEvent(self, event):
         super().showEvent(event)
@@ -58,13 +61,17 @@ class LibraryPage(QFrame):
 
         self.gridLayout_3.addItem(self.horizontalSpacer, 0, 0, 1, 1)
         
-        # self.btn_populate_song = QPushButton()
+        self.btn_library_populate = QPushButton(self)
+        self.btn_library_populate.setObjectName('btn_library_populate')
+        self.btn_library_populate.setCursor(QCursor(Qt.PointingHandCursor))
+
+        self.gridLayout_3.addWidget(self.btn_library_populate, 0, 1, 1, 1)
 
         self.btn_shuffle = QPushButton(self)
         self.btn_shuffle.setObjectName(u"btn_shuffle")
         self.btn_shuffle.setCursor(QCursor(Qt.PointingHandCursor))
 
-        self.gridLayout_3.addWidget(self.btn_shuffle, 0, 1, 1, 1)
+        self.gridLayout_3.addWidget(self.btn_shuffle, 0, 2, 1, 1)
 
         self.table_song = QTableWidget(self)
         if (self.table_song.columnCount() < 6):
@@ -93,7 +100,7 @@ class LibraryPage(QFrame):
         self.table_song.setRowCount(0)
         self.table_song.setColumnCount(6)
 
-        self.gridLayout_3.addWidget(self.table_song, 1, 0, 1, 2)
+        self.gridLayout_3.addWidget(self.table_song, 1, 0, 1, 5)
 
     def apply_stylesheet(self):
         with open(STYLE_LIBRARY_PAGE, 'r') as file:
@@ -107,3 +114,4 @@ class LibraryPage(QFrame):
         self.table_song_header3.setText('Date Added')
         self.table_song_header4.setText('Times Played')
         self.btn_shuffle.setText('Shuffle')
+        self.btn_library_populate.setText('Show all songs')

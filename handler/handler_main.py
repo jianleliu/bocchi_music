@@ -17,11 +17,12 @@ from config.states import *
 from session.session_data import session_data
 from configparser import ConfigParser
 from random import randint
+from initialization.initialization_internal import *
 
 config = ConfigParser()
 
 
-def handle_populate_table_song(table_song: QTableWidgetItem, dict_song: dict) -> None:
+def handle_populate_table_song(table_song: QTableWidget, dict_song: dict) -> None:
     table_song.setRowCount(0)
     # prev_entities = len(table_song_entities)
     # table_song_entities = init_table_song(song_path, ['.mp4', '.mp3'])
@@ -44,6 +45,20 @@ def handle_populate_table_song(table_song: QTableWidgetItem, dict_song: dict) ->
         item.setIcon(icon)
         table_song.setVerticalHeaderItem(index_row, item)
         index_row += 1
+
+
+def handle_btn_library_populate(table_song:  QTableWidget):
+    config.read(INI_FILE_PATH)
+    # read dirs
+    dir_song_root = config[SECTION_SETTINGS_TAB_1][KEY_DIR_TRACK_DOWNLOAD]
+    dir_playlist_root = config[SECTION_SETTINGS_TAB_1][KEY_DIR_PLAYLIST_DOWNLOAD]
+    
+    # recursively append songs
+    session_data.dict_song_entity = populate_song_entity_all(
+        dir_song_root, dir_playlist_root, [DEFAULT_DOWNLOAD_FORMAT])
+    
+    # populate table
+    handle_populate_table_song(table_song, session_data.dict_song_entity)
 
 
 def handle_player(main_window, row):
@@ -203,10 +218,10 @@ def _play_song(table_song: QTableWidget, widget_playBar, state: dict, song_entit
     icon = QTableWidgetItem()
     icon.setIcon(QPixmap(IMAGE_PAUSE))
     table_song.setVerticalHeaderItem(row, icon)
-    
+
     # update playbar
     widget_playBar.btn_play_pause.setIcon(QIcon(IMAGE_PAUSE))
-    
+
     # read value
     state[KEY_DICT_PLAYER_STATES_ROW] = row
     config.read(INI_FILE_PATH)
@@ -217,7 +232,7 @@ def _play_song(table_song: QTableWidget, widget_playBar, state: dict, song_entit
         dir_song, song_entity[row][KEY_DICT_SONG_ENTITY_BASENAME])
     player.setSource(QUrl.fromLocalFile(file_path))
     player.play()
-    
+
     # update state values
     state[KEY_DICT_PLAYER_STATES_PATH] = file_path
     state[KEY_DICT_PLAYER_STATES_STATE] = STATE_PLAY
@@ -228,11 +243,10 @@ def _continue_song(table_song: QTableWidget, widget_playBar, state: dict, song_e
     icon = QTableWidgetItem()
     icon.setIcon(QPixmap(IMAGE_PAUSE))
     table_song.setVerticalHeaderItem(row, icon)
-    
-    
+
     # update playbar
     widget_playBar.btn_play_pause.setIcon(QIcon(IMAGE_PAUSE))
-    
+
     # start player and update value
     player.play()
     state[KEY_DICT_PLAYER_STATES_STATE] = STATE_PLAY
@@ -244,10 +258,10 @@ def _pause_song(table_song: QTableWidget, widget_playBar, state: dict, song_enti
     icon = QTableWidgetItem()
     icon.setIcon(QPixmap(IMAGE_PLAY))
     table_song.setVerticalHeaderItem(row, icon)
-    
+
     # update playbar
     widget_playBar.btn_play_pause.setIcon(QIcon(IMAGE_PLAY))
-    
+
     # start player and update value
     player.pause()
     state[KEY_DICT_PLAYER_STATES_STATE] = STATE_PAUSE
@@ -260,11 +274,10 @@ def _switch_song(table_song: QTableWidget, widget_playBar, state: dict, song_ent
     icon = QTableWidgetItem()
     icon.setIcon(QPixmap(IMAGE_PLAY))
     table_song.setVerticalHeaderItem(state[KEY_DICT_PLAYER_STATES_ROW], icon)
-    
-    
+
     widget_playBar.btn_play_pause.setIcon(QIcon(IMAGE_PLAY))
     widget_playBar.angle = 0
-    
+
     # stop the current song
     player.stop()
     time.sleep(0.01)

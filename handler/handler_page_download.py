@@ -118,7 +118,7 @@ def _download_mp4(page_download, video_url, directory=os.getcwd(), audio_only=DE
     # download audio only or highest resolution video
     stream = yt.streams.filter(
         only_audio=audio_only) if audio_only else yt.streams.get_highest_resolution()
-    file_name = f'{safe_filename(yt.title)}.{DEFAULT_DOWNLOAD_FORMAT}'
+    file_name = f'{safe_filename(yt.title)}{DEFAULT_DOWNLOAD_FORMAT}'
     stream.download(output_path=directory, filename=file_name)
 
     file_path = stream.get_file_path()

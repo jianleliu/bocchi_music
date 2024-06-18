@@ -110,6 +110,12 @@ class MainWindow(QMainWindow):
         self.widget_page_library.signal_play_pause_clicked.connect(
             lambda row: handle_player(self, row))
 
+        self.widget_page_library.signal_btn_library_populate_clicked.connect(
+            lambda: handle_btn_library_populate(self.widget_page_library.table_song))
+
+        self.widget_page_library.signal_btn_shuffle_clicked.connect(
+            lambda: handle_player(self, randint(0, len(session_data.dict_song_entity) - 1)))
+
     def handle_sideShrinked_signal(self):
         self.widget_sideShrinked.signal_page_switch.connect(
             lambda page_num: handle_page_switch(self, page_num))
