@@ -36,17 +36,25 @@ def handle_download_track(page_download, url, signal_repopulate_table_song):
     is_playlist = findall(r'list=', url)
     logger.info(f'song: {is_song}, playlist: {is_playlist}')
 
+    msg_box = QMessageBox(page_download.window())
+    msg_box.setWindowTitle('Choose an option')
+    msg_box_finish = QMessageBox(page_download.window())
+    msg_box_finish.setWindowTitle('Done')
+    msg_box_finish.addButton('Done', QMessageBox.AcceptRole)
+
     if is_song and is_playlist:
         # ask user if want to download song or playlist
-        msg_box = QMessageBox(page_download.window())
-        msg_box.setWindowTitle('Choose an option')
+        # configure msg box
         msg_box.setText(
             'This url contains a song inside a playlist, would you like to download the playlist or the song.')
         btn_song = msg_box.addButton('Song', QMessageBox.AcceptRole)
         btn_playlist = msg_box.addButton('Playlist', QMessageBox.AcceptRole)
         btn_cancel = msg_box.addButton('Cancel', QMessageBox.RejectRole)
         msg_box.exec_()
+        
+        # log
         logger.info(f'dir_song: {dir_song} audio only: {check_audio_only}')
+        
         # download signle file if user clicked btn_song
         if msg_box.clickedButton() == btn_song:
             file_path = _download_mp4(
@@ -56,28 +64,61 @@ def handle_download_track(page_download, url, signal_repopulate_table_song):
                 KEY_DICT_SONG_ENTITY_TITLE: os.path.splitext(
                     os.path.basename(file_path))[0]
             })
+            
         # else download the entire playlist
         elif msg_box.clickedButton() == btn_playlist:
             _download_playlist(page_download, url, dir_playlist,
                                audio_only=check_audio_only)
             logger.info(dir_playlist)
         return
+    
     # if url is a song, download it
     elif is_song:
-        file_path = _download_mp4(
-            url, directory=dir_song, audio_only=check_audio_only)
-        session_data.dict_song_entity.setdefault(len(session_data.dict_song_entity), {
-            KEY_DICT_SONG_ENTITY_BASENAME: os.path.basename(file_path),
-            KEY_DICT_SONG_ENTITY_TITLE: os.path.splitext(
-                os.path.basename(file_path))[0]
-        })
+        msg_box.setText('Download this song?')
+        btn_confirm = msg_box.addButton('Confirm', QMessageBox.AcceptRole)
+        btn_cancel = msg_box.addButton('Cancel', QMessageBox.RejectRole)
+        msg_box.exec_()
+
+        if msg_box.clickedButton() == btn_confirm:
+            try:
+                file_path = _download_mp4(page_download, url, directory=dir_song, audio_only=check_audio_only) 
+                session_data.dict_song_entity.setdefault(len(session_data.dict_song_entity), {
+                        KEY_DICT_SONG_ENTITY_BASENAME: os.path.basename(file_path),
+                        KEY_DICT_SONG_ENTITY_TITLE: os.path.splitext(
+                            os.path.basename(file_path))[0]
+                    })
+                msg_box_finish.setText('Successful!')
+                msg_box_finish.exec_()
+                
+            except Exception as error:
+                msg_box_finish.setText(f'An error has occurred: {error}')
+                logger.error(f'Occurred while downloading song: {error}')
+                msg_box_finish.exec_()
+                
     # if its a playlist, download all of it.
     elif is_playlist:
-        _download_playlist(page_download, url, dir_playlist,
-                           audio_only=check_audio_only)
+        msg_box.setText('Download this playlist?')
+        btn_confirm = msg_box.addButton('Confirm', QMessageBox.AcceptRole)
+        btn_cancel = msg_box.addButton('Cancel', QMessageBox.RejectRole)
+        msg_box.exec_()
+        
+        if msg_box.clickedButton() == btn_confirm:
+            try:
+                _download_playlist(page_download, url, dir_playlist,
+                               audio_only=check_audio_only)
+                msg_box_finish.setText('Successful!')
+                msg_box_finish.exec_()
+            except Exception as error:
+                msg_box_finish.setText(f'An error has occurred: {error}')
+                logger.error(f'Occurred while downloading playlist: {error}')
+                msg_box_finish.exec_()
+                
         logger.info(dir_playlist)
+        
     else:
         page_download.update_status_box(f'Invalid URL: {url}')
+        msg_box_finish.setText(f'Invalid URL: {url}')
+        msg_box_finish.exec_()
 
     # emit signal to update table_song
     signal_repopulate_table_song.emit()
@@ -136,9 +177,9 @@ def _download_mp4(page_download, video_url, directory=os.getcwd(), audio_only=DE
     file_path = stream.get_file_path()
 
     page_download.update_status_box(f'Downloaded at {file_path}')
-    
+
     logger.info(f'Downloaded at {file_path}')
-    
+
     return file_path
 
 
@@ -151,7 +192,7 @@ def _download_playlist(page_download, playlist_url, directory=os.getcwd(), audio
 
     page_download.update_status_box(f'URLs Found: {count} in playlist {
                                     cleaned_playlist_title}')
-    
+
     cleaned_list_filename = []
 
     # create a list of clenaed filenames within the playlist dir
@@ -166,15 +207,16 @@ def _download_playlist(page_download, playlist_url, directory=os.getcwd(), audio
         song_path = Path(dir_new_song).joinpath(
             f'{cleaned_video_title}.{DEFAULT_DOWNLOAD_FORMAT}')
         song_exists = cleaned_video_title in cleaned_list_filename
-        
-        
+
         if song_exists:
             logger.info(f'exists: {song_exists} title: {cleaned_video_title}')
             page_download.update_status_box(
                 f'Skipping: file {video_title} found as {song_path}')
             continue
-        
-        _download_mp4(page_download, url, directory=dir_new_song, audio_only=audio_only)
+
+        _download_mp4(page_download, url, directory=dir_new_song,
+                      audio_only=audio_only)
+
 
 def safe_filename(s: str, max_length: int = 255) -> str:
     """Sanitize a string making it safe to use as a filename.
