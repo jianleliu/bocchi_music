@@ -1,12 +1,14 @@
 from PySide6.QtWidgets import QFileDialog
 from os import path
+import logging
 from configparser import ConfigParser
 from config.default_parameters import INI_FILE_PATH
 from config.sections import SECTION_SETTINGS_TAB_1
 config = ConfigParser()
-
+logger = logging.getLogger(__name__)
 
 def handle_browse_path(target_object, key):
+    logger.info('handler called')
     """Set the target_object's text to user browse path.
 
     Args:

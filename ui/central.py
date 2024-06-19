@@ -14,15 +14,20 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QFrame, QGridLayout,
 
 import os
 from config.style_manager import STYLE_CENTRAL
+import logging
 
+logger = logging.getLogger(__name__)
 
 class CentralWidget(QFrame):
   def __init__(self, MainWindow):
+    logger.info('initializing')
     super().__init__(MainWindow)
+    
     self.setObjectName('central_widget')
     
     
     # apply style sheet
+    logger.info('initializing stylesheet')
     self.apply_stylesheet()
     # self.setStyleSheet(TEMP_STYLE)
     

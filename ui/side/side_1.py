@@ -3,15 +3,13 @@ from PySide6.QtGui import (QCursor, QIcon, QPixmap)
 from PySide6.QtWidgets import (
     QFrame, QHBoxLayout, QLabel, QPushButton, QSizePolicy, QSpacerItem, QVBoxLayout)
 import os
+import logging
 from config.style_manager import STYLE_SIDE_SHRINKED
 from config.image_manager import (IMAGE_LOGO, IMAGE_HOME_BTN_1, IMAGE_LIBRARY_BTN_1,
                                   IMAGE_PLAYLIST_BTN_1, IMAGE_DOWNLOAD_BTN_1,
                                   IMAGE_SETTINGS_BTN_1)
 
-IMAGE_DIR = os.path.join(os.path.dirname(__file__),
-                         f'../../resource/images')
-STYLE_DIR = os.path.join(os.path.dirname(__file__),
-                         f'../../resource/style')
+logger = logging.getLogger(__name__)
 
 
 class SideShrinked(QFrame):
@@ -23,6 +21,7 @@ class SideShrinked(QFrame):
     signal_page_switch = Signal(int)
 
     def __init__(self, centralWidget):
+        logger.info('initializing')
         super().__init__(centralWidget)
         self.setObjectName(u'side_shrinked')
         self.setHidden(True)
@@ -40,15 +39,18 @@ class SideShrinked(QFrame):
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
 
         # sidebar logo
+        logger.info('initializing components')
         self.initialize_logo()
 
         # list of side buttons
         self.initialize_buttons()
 
         # apply stylesheet
+        logger.info('initializing stylesheet')
         self.apply_stylesheet()
 
         # signals
+        logger.info('emit signal')
         self.emit_signal()
 
     def emit_signal(self):

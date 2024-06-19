@@ -21,16 +21,20 @@ from PySide6.QtGui import (QIcon)
 from PySide6.QtWidgets import (QSizePolicy,
                                QGridLayout, QHBoxLayout, QMainWindow, QVBoxLayout)
 import os
+import logging
 
+logger = logging.getLogger(__name__)
 
 class MainWindow(QMainWindow):
     def __init__(self) -> None:
+        logger.info('initializing')
         # initialization
         super().__init__()
 
         self.setObjectName('main_window')
         self.setWindowTitle('Bocchi Music')
 
+        logger.info('initializing widgets')
         self.widget_centralWidget = CentralWidget(self)
 
         # initialize widgets
@@ -48,10 +52,14 @@ class MainWindow(QMainWindow):
         self.setMenuBar(self.menuBar_menu_bar)
         self.setStatusBar(self.statusBar_status_bar)
 
+        logger.info('initializing layouts')
         # configure widget layouts
         self.initialize_layout()
+        
+        logger.info('initializing default values')        
         self.configure_default_value()
-
+        
+        logger.info('initializing stylesheet')
         # apply stylesheet
         self.apply_stylesheet()
 

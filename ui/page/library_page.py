@@ -5,15 +5,14 @@ from PySide6.QtWidgets import (QFrame, QGridLayout,
                                QTableWidget,
                                QTableWidgetItem)
 import os
+import logging
 from configparser import ConfigParser
 from config.style_manager import STYLE_LIBRARY_PAGE
 from config.default_parameters import INI_FILE_PATH
 from config.sections import SECTION_SETTINGS_TAB_1
 from config.keys import KEY_DIR_TRACK_DOWNLOAD
 
-STYLE_DIR = os.path.join(os.path.dirname(__file__),
-                         f'../../resource/style')
-
+logger = logging.getLogger(__name__)
 
 class LibraryPage(QFrame):
     signal_populate_table_song = Signal()
@@ -21,22 +20,27 @@ class LibraryPage(QFrame):
     signal_btn_shuffle_clicked = Signal()
     signal_btn_library_populate_clicked = Signal()
     def __init__(self):
+        logger.info('initializing')
         super().__init__()
         self.setObjectName('library_page')
         self.first_show = True
 
         # initialize song table
+        logger.info('initializing table_song')
         self.initilize_table_song()
 
         # populate song table
 
         # apply stylesheet
+        logger.info('initializing stylesheet')
         self.apply_stylesheet()
 
         # configure display text
+        logger.info('configure parameters')
         self.configure_parameters()
 
         # emit signal
+        logger.info('emit signal')
         self.emit_signal()
 
     def emit_signal(self):

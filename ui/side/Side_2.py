@@ -9,16 +9,16 @@ from config.image_manager import (IMAGE_LOGO, IMAGE_HOME_BTN_2, IMAGE_LIBRARY_BT
                                   IMAGE_PLAYLIST_BTN_2, IMAGE_DOWNLOAD_BTN_2,
                                   IMAGE_SETTINGS_BTN_2)
 
-IMAGE_DIR = os.path.join(os.path.dirname(__file__),
-                         f'../../resource/images')
-STYLE_DIR = os.path.join(os.path.dirname(__file__),
-                         f'../../resource/style')
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class SideExpanded(QFrame):
     signal_page_switch = Signal(int)
 
     def __init__(self, centralWidget):
+        logger.info('initializing')
         super().__init__(centralWidget)
         self.setObjectName('side_expanded')
         sizePolicy3 = QSizePolicy(
@@ -35,18 +35,22 @@ class SideExpanded(QFrame):
         self.verticalLayout_2.setObjectName('verticalLayout_expanded')
 
         # logo
+        logger.info('initializing components')
         self.initialize_logo()
 
         # buttons
         self.initialize_buttons()
 
         # apply stylesheet
+        logger.info('initializing stylesheet')
         self.apply_stylesheet()
 
         # configure display text
+        logger.info('configure parameters')
         self.configure_parameters()
 
         # signal
+        logger.info('emit signal')
         self.emit_signal()
 
     def emit_signal(self):

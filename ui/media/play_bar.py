@@ -3,10 +3,12 @@ from PySide6.QtGui import (QCursor, QIcon, QPixmap, QPainter, QTransform)
 from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QPushButton, QSizePolicy, QSlider, QSpacerItem,
                                QVBoxLayout, QLCDNumber)
 import os
+import logging
 from config.style_manager import STYLE_PLAY_BAR
 from config.image_manager import *
 from config.default_parameters import *
 
+logger = logging.getLogger(__name__)
 
 class PlayBar(QFrame):
     signal_btn_spinning_bocchi_clicked = Signal()
@@ -22,6 +24,7 @@ class PlayBar(QFrame):
     signal_slider_volume_changed = Signal(int)
 
     def __init__(self, centralWidget):
+        logger.info('initializing')
         super().__init__(centralWidget)
         self.setObjectName('play_bar')
         sizePolicy5 = QSizePolicy(QSizePolicy.Policy.Expanding,
@@ -32,19 +35,24 @@ class PlayBar(QFrame):
         self.setMaximumSize(QSize(16777215, 85))
 
         # layouts
+        logger.info('initializing layouts')
         self.initialize_layout()
 
         # components
+        logger.info('initializing components')
         self.initalize_components()
 
         # apply stylesheet
+        logger.info('initializing stylesheet')
         self.apply_stylesheet()
         # self.setStyleSheet(TEMP_STYLE)
 
         # configure display text
+        logger.info('configure parameters')
         self.configure_parameters()
 
         # emit signals
+        logger.info('emit signals')
         self.emit_signal()
 
     def emit_signal(self):

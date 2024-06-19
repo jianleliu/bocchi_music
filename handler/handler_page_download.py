@@ -12,6 +12,9 @@ from session.session_data import session_data
 import os
 from pathlib import Path
 import re
+import logging
+
+logger = logging.getLogger(__name__)
 
 # needed to bypass age restriction
 _default_clients["ANDROID_MUSIC"] = _default_clients["ANDROID_CREATOR"]
@@ -27,10 +30,11 @@ check_use_default_path = None
 
 def handle_download_track(page_download, url, signal_repopulate_table_song):
     # find if it's a playlist, song, or song in a playlist
+    logger.info('handler called')
     _read_config_ini()
     is_song = findall(r'watch\?v=', url)
     is_playlist = findall(r'list=', url)
-    print(f'song: {is_song}, playlist: {is_playlist}')
+    logger.info(f'song: {is_song}, playlist: {is_playlist}')
 
     if is_song and is_playlist:
         # ask user if want to download song or playlist
@@ -42,7 +46,7 @@ def handle_download_track(page_download, url, signal_repopulate_table_song):
         btn_playlist = msg_box.addButton('Playlist', QMessageBox.AcceptRole)
         btn_cancel = msg_box.addButton('Cancel', QMessageBox.RejectRole)
         msg_box.exec_()
-        print(f'dir_song: {dir_song} audio only: {check_audio_only}')
+        logger.info(f'dir_song: {dir_song} audio only: {check_audio_only}')
         # download signle file if user clicked btn_song
         if msg_box.clickedButton() == btn_song:
             file_path = _download_mp4(
@@ -56,7 +60,7 @@ def handle_download_track(page_download, url, signal_repopulate_table_song):
         elif msg_box.clickedButton() == btn_playlist:
             _download_playlist(page_download, url, dir_playlist,
                                audio_only=check_audio_only)
-            print(dir_playlist)
+            logger.info(dir_playlist)
         return
     # if url is a song, download it
     elif is_song:
@@ -71,31 +75,38 @@ def handle_download_track(page_download, url, signal_repopulate_table_song):
     elif is_playlist:
         _download_playlist(page_download, url, dir_playlist,
                            audio_only=check_audio_only)
-        print(dir_playlist)
+        logger.info(dir_playlist)
     else:
         page_download.update_status_box(f'Invalid URL: {url}')
 
     # emit signal to update table_song
     signal_repopulate_table_song.emit()
+    logger.info('handler ended')
 
 
 def handle_check_audio_only(is_checked):
+    logger.info('handler called')
     config[SECTION_PAGE_DOWNLOAD][KEY_CHECK_AUDIO_ONLY] = str(is_checked)
     with open(INI_FILE_PATH, 'w') as f:
         config.write(f)
+    logger.info('handler ended')
 
 
 def handle_check_use_default_path(is_checked):
+    logger.info('handler called')
     config[SECTION_PAGE_DOWNLOAD][KEY_CHECK_USE_DEFAULT_PATH] = str(is_checked)
     with open(INI_FILE_PATH, 'w') as f:
         config.write(f)
+    logger.info('handler ended')
 
 
 def handle_check_include_thumbnail(is_checked):
+    logger.info('handler called')
     config[SECTION_PAGE_DOWNLOAD][KEY_CHECK_INCLUDE_THUMBNAIL] = str(
         is_checked)
     with open(INI_FILE_PATH, 'w') as f:
         config.write(f)
+    logger.info('handler ended')
 
 
 def _read_config_ini():
@@ -113,6 +124,7 @@ def _read_config_ini():
 
 
 def _download_mp4(page_download, video_url, directory=os.getcwd(), audio_only=DEFAULT_CHECK_AUDIO_ONLY):
+    logger.info('downloading song')
     page_download.update_status_box(f'URL: {video_url} Found')
     yt = YouTube(video_url)
     # download audio only or highest resolution video
@@ -125,12 +137,13 @@ def _download_mp4(page_download, video_url, directory=os.getcwd(), audio_only=DE
 
     page_download.update_status_box(f'Downloaded at {file_path}')
     
-    print(f'Downloaded at {file_path}')
+    logger.info(f'Downloaded at {file_path}')
     
     return file_path
 
 
 def _download_playlist(page_download, playlist_url, directory=os.getcwd(), audio_only=DEFAULT_CHECK_AUDIO_ONLY):
+    logger.info('downloading playlist')
     playlist = Playlist(playlist_url)
     cleaned_playlist_title = safe_filename(playlist.title)
     dir_new_song = Path(directory).joinpath(cleaned_playlist_title)
@@ -154,15 +167,13 @@ def _download_playlist(page_download, playlist_url, directory=os.getcwd(), audio
             f'{cleaned_video_title}.{DEFAULT_DOWNLOAD_FORMAT}')
         song_exists = cleaned_video_title in cleaned_list_filename
         
-        print(f'exists: {song_exists} title: {cleaned_video_title}')
+        
         if song_exists:
+            logger.info(f'exists: {song_exists} title: {cleaned_video_title}')
             page_download.update_status_box(
                 f'Skipping: file {video_title} found as {song_path}')
             continue
         
-        print('downloading', video_title)
-        if i == 5:
-            break
         _download_mp4(page_download, url, directory=dir_new_song, audio_only=audio_only)
 
 def safe_filename(s: str, max_length: int = 255) -> str:
@@ -179,6 +190,7 @@ def safe_filename(s: str, max_length: int = 255) -> str:
     :returns:
         A sanitized string.
     """
+    logger.info('sanitize filename')
     # Characters in range 0-31 (0x00-0x1F) are not allowed in ntfs filenames.
     ntfs_characters = [chr(i) for i in range(0, 31)]
     characters = [

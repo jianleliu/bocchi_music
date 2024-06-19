@@ -3,11 +3,14 @@ from config.sections import SECTION_SETTINGS_TAB_1
 from config.keys import *
 from os import path, listdir, walk
 from configparser import ConfigParser
+import logging
 
+logger = logging.getLogger(__name__)
 config = ConfigParser()
 
 
 def generate_dict_song_entity() -> dict:
+    logger.info('generating dict_song_entity...')
     config.read(INI_FILE_PATH)
     dict_song_entity = {}
     dir_song = config[SECTION_SETTINGS_TAB_1][KEY_DIR_TRACK_DOWNLOAD]
@@ -22,10 +25,12 @@ def generate_dict_song_entity() -> dict:
                     KEY_DICT_SONG_ENTITY_TITLE: path.splitext(basename)[0],
                 })
                 count += 1
+    logger.info(f'total songs found: {len(dict_song_entity)}')
     return dict_song_entity
 
 
 def populate_song_entity_all(dir_song_root: str, dir_playlist_root: str, extensions: list):
+    logger.info('populate dict_song_entity from library and all playlist...')
     '''
     Recursively find songs with specified extensions starting from root_dir.
 
@@ -80,7 +85,7 @@ def populate_song_entity_all(dir_song_root: str, dir_playlist_root: str, extensi
                     })
                     seen_files.append(filename_without_ext)
                     index += 1
-    print(len(result))
-
+    
+    logger.info(f'total songs found: {len(result)}')
     return result
 

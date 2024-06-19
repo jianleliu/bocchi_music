@@ -3,19 +3,17 @@ from PySide6.QtGui import (QCursor, QIcon)
 from PySide6.QtWidgets import (
     QFrame, QHBoxLayout, QLineEdit, QPushButton, QSizePolicy, QSpacerItem)
 import os
+import logging
 from config.style_manager import STYLE_TOP_BAR
 from config.image_manager import IMAGE_SEARCH, IMAGE_MENU
 
-IMAGE_DIR = os.path.join(os.path.dirname(__file__),
-                         f'../../resource/images')
-STYLE_DIR = os.path.join(os.path.dirname(__file__),
-                         f'../../resource/style')
-
+logger = logging.getLogger(__name__)
 
 class TopBar(QFrame):
     signal_menu_toggle = Signal(bool)
     
     def __init__(self, centralWidget):
+        logger.info('initializing')
         super().__init__(centralWidget)
         self.setObjectName(u"top_bar")
         sizePolicy5 = QSizePolicy(QSizePolicy.Policy.Expanding,
@@ -26,14 +24,19 @@ class TopBar(QFrame):
         self.setSizePolicy(sizePolicy5)
 
         # initialize components
+        logger.info('initializing components')
         self.initialize_components()
+        
         # stylesheet
+        logger.info('initializing stylesheet')
         self.apply_stylesheet()
         
         # configure display text
+        logger.info('configure parameters')
         self.configure_parameters()
         
         # emit signal
+        logger.info('emit signal')
         self.emit_signal()
         
     def emit_signal(self):

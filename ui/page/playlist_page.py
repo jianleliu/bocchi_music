@@ -2,11 +2,14 @@ from PySide6.QtCore import (Qt)
 from PySide6.QtGui import (QCursor)
 from PySide6.QtWidgets import (
     QFrame, QHBoxLayout, QPushButton, QSizePolicy, QVBoxLayout, QWidget)
+import logging
 
+logger = logging.getLogger(__name__)
 
 class PlaylistPage(QFrame):
     def __init__(self):
         super().__init__()
+        logger.info('initializing')
         self.setObjectName(u"playlist_page")
         # self.verticalLayout_25 = QVBoxLayout(self)
         # self.verticalLayout_25.setObjectName(u"verticalLayout_25")

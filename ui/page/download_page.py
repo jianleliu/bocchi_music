@@ -11,6 +11,9 @@ from handler.handler_page_download import *
 import asyncio
 from PySide6.QtWidgets import QProgressBar
 from app import app
+import logging
+
+logger = logging.getLogger(__name__)
 
 class DownloadPage(QFrame):
     signal_download = Signal()
@@ -20,6 +23,7 @@ class DownloadPage(QFrame):
     # signal_check_include_thumbnail = Signal(bool)
 
     def __init__(self):
+        logger.info('initializing')
         super().__init__()
         self.setObjectName(u"download_page")
         self.verticalLayout_24 = QVBoxLayout(self)
@@ -28,6 +32,7 @@ class DownloadPage(QFrame):
         self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
 
         # search bar and options
+        logger.info('initializing components')
         self.initialize_search_bar()
 
         # advanced tab
@@ -40,15 +45,19 @@ class DownloadPage(QFrame):
         self.initialize_progress_bar()
 
         # apply stylesheet
+        logger.info('initializing stylesheet')
         self.apply_stylesheet()
 
         # configure display text
+        logger.info('configure parameters')
         self.configure_parameters()
 
-        # handle event
+        # # handle event
+        logger.info('handle events')
         self.handle_event()
 
         # emit signal
+        logger.info('emit signal')
         self.emit_signal()
 
     def handle_event(self):

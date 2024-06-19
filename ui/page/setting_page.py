@@ -9,30 +9,36 @@ from config.sections import *
 from config.keys import *
 from configparser import ConfigParser
 from os import path
+import logging
 
+logger = logging.getLogger(__name__)
 
 class SettingPage(QFrame):
 
     def __init__(self):
+        logger.info('initializing')
         super().__init__()
         self.setObjectName('setting_page')
         self.verticalLayout_26 = QVBoxLayout(self)
         self.verticalLayout_26.setObjectName('verticalLayout_26')
         
-        #
+        logger.info('initializing tab widget')
         self.tabWidget = QTabWidget(self)
         self.tabWidget.setObjectName('tabWidget')
 
         # initialize tabs
+        logger.info('initializing tabs')
         self.parameter_tab()
         self.second_tab()
 
         # self.btn_browse_song_path.clicked.connect(switch_tab(self.le_song_dir))
 
         # configure display text
+        logger.info('configure parameters')
         self.configure_parameter()
 
         # handle signal/events
+        logger.info('handle events')
         self.handle_event()
 
     def handle_event(self):
