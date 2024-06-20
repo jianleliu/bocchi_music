@@ -1,8 +1,8 @@
-from PySide6.QtCore import (Qt, Signal)
+from PySide6.QtCore import (Qt, Signal, QSortFilterProxyModel)
 from PySide6.QtGui import (QCursor)
-from PySide6.QtWidgets import (QFrame, QGridLayout,
+from PySide6.QtWidgets import (QFrame, QGridLayout, QTableView,
                                QPushButton, QSizePolicy, QSpacerItem,
-                               QTableWidget,
+                               QTableWidget, QLineEdit, QVBoxLayout, QHBoxLayout,
                                QTableWidgetItem)
 import os
 import logging
@@ -11,14 +11,17 @@ from config.style_manager import STYLE_LIBRARY_PAGE
 from config.default_parameters import INI_FILE_PATH
 from config.sections import SECTION_SETTINGS_TAB_1
 from config.keys import KEY_DIR_TRACK_DOWNLOAD
+from handler.handler_page_library import *
 
 logger = logging.getLogger(__name__)
+
 
 class LibraryPage(QFrame):
     signal_populate_table_song = Signal()
     signal_play_pause_clicked = Signal(int)
     signal_btn_shuffle_clicked = Signal()
     signal_btn_library_populate_clicked = Signal()
+
     def __init__(self):
         logger.info('initializing')
         super().__init__()
@@ -29,7 +32,8 @@ class LibraryPage(QFrame):
         logger.info('initializing table_song')
         self.initilize_table_song()
 
-        # populate song table
+        # layout
+        self.initialize_layout()
 
         # apply stylesheet
         logger.info('initializing stylesheet')
@@ -47,7 +51,11 @@ class LibraryPage(QFrame):
         self.table_song.verticalHeader().sectionClicked.connect(
             lambda row: self.signal_play_pause_clicked.emit(row))
         self.btn_shuffle.clicked.connect(self.signal_btn_shuffle_clicked)
-        self.btn_library_populate.clicked.connect(self.signal_btn_library_populate_clicked)
+        self.btn_library_populate.clicked.connect(
+            self.signal_btn_library_populate_clicked)
+
+        self.le_search_bar.textChanged.connect(
+            lambda: handle_le_search_bar(self.table_song, self.le_search_bar.text()))
 
     def showEvent(self, event):
         super().showEvent(event)
@@ -57,25 +65,19 @@ class LibraryPage(QFrame):
             self.first_show = False
 
     def initilize_table_song(self):
-        self.gridLayout_3 = QGridLayout(self)
-        self.gridLayout_3.setObjectName(u"gridLayout_3")
-        self.horizontalSpacer = QSpacerItem(494, 20,
-                                            QSizePolicy.Policy.Expanding,
-                                            QSizePolicy.Policy.Minimum)
+        self.le_search_bar = QLineEdit(self)
+        self.le_search_bar.setObjectName('le_search_bar')
+        self.le_search_bar.setCursor(QCursor(Qt.IBeamCursor))
+        self.le_search_bar.setSizePolicy(
+            QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Fixed)
 
-        self.gridLayout_3.addItem(self.horizontalSpacer, 0, 0, 1, 1)
-        
         self.btn_library_populate = QPushButton(self)
         self.btn_library_populate.setObjectName('btn_library_populate')
         self.btn_library_populate.setCursor(QCursor(Qt.PointingHandCursor))
 
-        self.gridLayout_3.addWidget(self.btn_library_populate, 0, 1, 1, 1)
-
         self.btn_shuffle = QPushButton(self)
         self.btn_shuffle.setObjectName(u"btn_shuffle")
         self.btn_shuffle.setCursor(QCursor(Qt.PointingHandCursor))
-
-        self.gridLayout_3.addWidget(self.btn_shuffle, 0, 2, 1, 1)
 
         self.table_song = QTableWidget(self)
         if (self.table_song.columnCount() < 6):
@@ -103,8 +105,18 @@ class LibraryPage(QFrame):
         self.table_song.setWordWrap(True)
         self.table_song.setRowCount(0)
         self.table_song.setColumnCount(6)
+        
 
-        self.gridLayout_3.addWidget(self.table_song, 1, 0, 1, 5)
+    def initialize_layout(self):
+        self.vertical = QVBoxLayout(self)
+        self.horizontal = QHBoxLayout()
+
+        self.horizontal.addWidget(self.le_search_bar)
+        self.horizontal.addWidget(self.btn_library_populate)
+        self.horizontal.addWidget(self.btn_shuffle)
+
+        self.vertical.addLayout(self.horizontal)
+        self.vertical.addWidget(self.table_song)
 
     def apply_stylesheet(self):
         with open(STYLE_LIBRARY_PAGE, 'r') as file:
@@ -119,3 +131,4 @@ class LibraryPage(QFrame):
         self.table_song_header4.setText('Times Played')
         self.btn_shuffle.setText('Shuffle')
         self.btn_library_populate.setText('Show all songs')
+        self.le_search_bar.setPlaceholderText('Search table')
