@@ -3,3 +3,7 @@
 *\.ini
 song/*
 log/*
+build/*
+dist/*
+*[.]spec
+Output/*

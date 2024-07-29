@@ -1,8 +1,6 @@
 from os import path, mkdir
 from configparser import ConfigParser
-from config.default_parameters import INI_FILE_PATH, DEFAULT_INI_DICT, DEFAULT_TRACK_DOWNLOAD_DIR
-
-DIR_ROOT = path.dirname(path.dirname(__file__))
+from config.default_parameters import INI_FILE_PATH, DEFAULT_INI_DICT, DEFAULT_TRACK_DOWNLOAD_DIR, DIR_ROOT
 
 
 def initialize_external():
@@ -13,9 +11,7 @@ def initialize_external():
 
 
 def initialize_config_ini():
-    path_ini = path.join(path.join(DIR_ROOT, 'config'), 'config.ini')
-
-    if not path.exists(path_ini):
+    if not path.exists(INI_FILE_PATH):
         config = ConfigParser()
         config.read_dict(DEFAULT_INI_DICT)
         with open(INI_FILE_PATH, 'w') as f:

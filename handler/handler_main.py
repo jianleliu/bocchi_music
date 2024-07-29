@@ -1,5 +1,5 @@
-from PySide6.QtCore import (QUrl, QTime)
-from PySide6.QtGui import (QPixmap, QIcon)
+from PySide6.QtCore import (QUrl, QTime, Qt)
+from PySide6.QtGui import (QPixmap, QIcon, QBrush, QColor)
 from PySide6.QtWidgets import (QFrame, QGridLayout,
                                QPushButton, QSizePolicy, QSpacerItem,
                                QTableWidget,
@@ -252,6 +252,11 @@ def _play_song(table_song: QTableWidget, widget_playBar, state: dict, song_entit
     icon = QTableWidgetItem()
     icon.setIcon(QPixmap(IMAGE_PAUSE))
     table_song.setVerticalHeaderItem(row, icon)
+    
+    # update bg color
+    selected_item= table_song.item(row, 0)
+    table_song.scrollToItem(selected_item)
+    selected_item.setBackground(QBrush(QColor(200, 200, 255)))
 
     # update playbar
     widget_playBar.btn_play_pause.setIcon(QIcon(IMAGE_PAUSE))
@@ -312,6 +317,11 @@ def _switch_song(table_song: QTableWidget, widget_playBar, state: dict, song_ent
     icon = QTableWidgetItem()
     icon.setIcon(QPixmap(IMAGE_PLAY))
     table_song.setVerticalHeaderItem(state[KEY_DICT_PLAYER_STATES_ROW], icon)
+    
+    # remove bg color
+    previous_row = state[KEY_DICT_PLAYER_STATES_ROW]
+    previous_item = table_song.item(previous_row, 0)
+    previous_item.setBackground(QBrush(QColor(255, 255, 255)))
 
     widget_playBar.btn_play_pause.setIcon(QIcon(IMAGE_PLAY))
     widget_playBar.angle = 0

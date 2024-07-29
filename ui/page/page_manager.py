@@ -38,7 +38,7 @@ class PageManager(QStackedWidget):
         # apply stylesheet
         logger.info('initializing stylesheet')
         self.apply_stylesheet()
-        self.setCurrentIndex(2)
+        self.setCurrentIndex(1)
 
     def add_page(self, name: str, page: QFrame, style_sheet=None):
         logger.info(f'initializing {name}')
