@@ -1,21 +1,32 @@
-from PySide6.QtCore import (QSize, Qt, Signal, QTimer)
-from PySide6.QtGui import (QCursor, QFont, QIcon)
-from PySide6.QtWidgets import (QCheckBox, QFrame, QGridLayout,
-                               QHBoxLayout, QLineEdit,
-                               QPushButton, QRadioButton,
-                               QSizePolicy, QTextBrowser, QVBoxLayout, QWidget)
-import os
-from config.style_manager import STYLE_DOWNLOAD_PAGE
-from config.image_manager import IMAGE_DOWNLOAD_BTN_2
-from handler.handler_page_download import *
-import asyncio
-from PySide6.QtWidgets import QProgressBar
-from app import app
+"""ui file for download page"""
+
 import logging
+
+from PySide6.QtCore import QSize, Qt, Signal
+from PySide6.QtGui import QCursor, QFont, QIcon
+from PySide6.QtWidgets import (QCheckBox, QFrame, QGridLayout, QHBoxLayout,
+                               QLineEdit, QProgressBar, QPushButton,
+                               QSizePolicy, QTextBrowser, QVBoxLayout, QWidget)
+
+from config.default_parameters import (DEFAULT_CHECK_AUDIO_ONLY,
+                                       DEFAULT_CHECK_USE_DEFAULT_PATH,
+                                       DEFAULT_ENCODING,
+                                       DEFAULT_PAGE_DOWNLOAD_NAME)
+from config.image_manager import IMAGE_DOWNLOAD_BTN_2
+from config.style_manager import STYLE_DOWNLOAD_PAGE
+from handler.handler_page_download import (handle_check_audio_only,
+                                           handle_check_use_default_path,
+                                           handle_download_track)
 
 logger = logging.getLogger(__name__)
 
+
 class DownloadPage(QFrame):
+    """download page with QFrame inheritance
+
+    Args:
+        QFrame (QFrame): QFrame
+    """
     signal_download = Signal()
     signal_repopulate_table_song = Signal()
     # signal_check_audio_only = Signal(bool)
@@ -25,32 +36,32 @@ class DownloadPage(QFrame):
     def __init__(self):
         logger.info('initializing')
         super().__init__()
-        self.setObjectName(u"download_page")
-        self.verticalLayout_24 = QVBoxLayout(self)
-        self.verticalLayout_24.setObjectName(u"verticalLayout_24")
-        self.horizontalLayout_7 = QHBoxLayout()
-        self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
+        self.setObjectName(DEFAULT_PAGE_DOWNLOAD_NAME)
+        self.vertical_layout_24 = QVBoxLayout(self)
+        self.vertical_layout_24.setObjectName('vertical_layout_24')
+        self.horizontal_layout_7 = QHBoxLayout()
+        self.horizontal_layout_7.setObjectName('horizontal_layout_7')
 
         # search bar and options
         logger.info('initializing components')
-        self.initialize_search_bar()
+        self._initialize_search_bar()
 
         # advanced tab
-        self.initialize_advanced_tab()
+        self._initialize_advanced_tab()
 
         # status box
-        self.initialize_status_box()
+        self._initialize_status_box()
 
         # progress bar
-        self.initialize_progress_bar()
+        self._initialize_progress_bar()
 
         # apply stylesheet
         logger.info('initializing stylesheet')
-        self.apply_stylesheet()
+        self._apply_stylesheet()
 
         # configure display text
         logger.info('configure parameters')
-        self.configure_parameters()
+        self._configure_parameters()
 
         # # handle event
         logger.info('handle events')
@@ -60,125 +71,120 @@ class DownloadPage(QFrame):
         logger.info('emit signal')
         self.emit_signal()
 
-    def handle_event(self):
+    def handle_event(self) -> None:
+        """event listener function.
+        """
         self.btn_advanced.toggled.connect(
             lambda: self.advanced_widget.setHidden(not self.advanced_widget.isHidden()))
         self.btn_download.clicked.connect(lambda: handle_download_track(
-             self, self.url_search_bar.text(), self.signal_repopulate_table_song))
+            self, self.url_search_bar.text(), self.signal_repopulate_table_song))
         self.check_audio_only.stateChanged.connect(
             lambda: handle_check_audio_only(self.check_audio_only.isChecked()))
         self.check_use_default_path.stateChanged.connect(
             lambda: handle_check_use_default_path(self.check_use_default_path.isChecked()))
 
-    def emit_signal(self):
-        pass
+    def emit_signal(self) -> None:
+        """signal to be emitted to MainWindow.
+        """
+        return
 
-    def initialize_status_box(self):
+    def _initialize_status_box(self) -> None:
+        """Initialize status box component.
+        """
         self.status_box = QTextBrowser(self)
-        self.status_box.setObjectName(u"status_box")
+        self.status_box.setObjectName('status_box')
 
-        self.verticalLayout_24.addWidget(self.status_box)
+        self.vertical_layout_24.addWidget(self.status_box)
 
-    def initialize_advanced_tab(self):
+    def _initialize_advanced_tab(self) -> None:
+        """Initialize advanced tab.
+        """
         self.btn_advanced = QPushButton(self)
-        self.btn_advanced.setObjectName(u"btn_advanced")
+        self.btn_advanced.setObjectName('btn_advanced')
         self.btn_advanced.setCheckable(True)
         self.btn_advanced.setCursor(QCursor(Qt.PointingHandCursor))
 
-        self.verticalLayout_24.addWidget(self.btn_advanced)
+        self.vertical_layout_24.addWidget(self.btn_advanced)
 
         # advanced widget tab
         self.advanced_widget = QWidget(self)
-        self.advanced_widget.setObjectName(u"advanced_widget")
+        self.advanced_widget.setObjectName('advanced_widget')
         self.advanced_widget.setMinimumSize(QSize(0, 50))
-        self.gridLayout = QGridLayout(self.advanced_widget)
-        self.gridLayout.setObjectName(u"gridLayout")
+        self.grid_layout = QGridLayout(self.advanced_widget)
+        self.grid_layout.setObjectName('grid_layout')
 
         # audio only check
         self.check_audio_only = QCheckBox(self.advanced_widget)
-        self.check_audio_only.setObjectName(u"check_audio_only")
+        self.check_audio_only.setObjectName('check_audio_only')
         font = QFont()
         font.setPointSize(10)
         self.check_audio_only.setFont(font)
         self.check_audio_only.setChecked(DEFAULT_CHECK_AUDIO_ONLY)
 
-        self.gridLayout.addWidget(self.check_audio_only, 0, 0, 1, 1)
+        self.grid_layout.addWidget(self.check_audio_only, 0, 0, 1, 1)
 
         # default path check
         self.check_use_default_path = QCheckBox(self.advanced_widget)
-        self.check_use_default_path.setObjectName(u"check_use_default_path")
+        self.check_use_default_path.setObjectName('check_use_default_path')
         self.check_use_default_path.setFont(font)
         self.check_use_default_path.setChecked(DEFAULT_CHECK_USE_DEFAULT_PATH)
 
-        self.gridLayout.addWidget(self.check_use_default_path, 1, 0, 1, 1)
+        self.grid_layout.addWidget(self.check_use_default_path, 1, 0, 1, 1)
 
-        self.verticalLayout_24.addWidget(self.advanced_widget)
+        self.vertical_layout_24.addWidget(self.advanced_widget)
 
-    def initialize_search_bar(self):
+    def _initialize_search_bar(self) -> None:
+        """Initialize url search bar.
+        """
         # search bar
         self.url_search_bar = QLineEdit(self)
-        self.url_search_bar.setObjectName(u"url_search_bar")
-        sizePolicy7 = QSizePolicy(QSizePolicy.Policy.MinimumExpanding,
-                                  QSizePolicy.Policy.Fixed)
-        sizePolicy7.setHeightForWidth(
+        self.url_search_bar.setObjectName('url_search_bar')
+        size_policy_7 = QSizePolicy(QSizePolicy.Policy.MinimumExpanding,
+                                    QSizePolicy.Policy.Fixed)
+        size_policy_7.setHeightForWidth(
             self.url_search_bar.sizePolicy().hasHeightForWidth())
-        self.url_search_bar.setSizePolicy(sizePolicy7)
-        # self.url_search_bar.setStyleSheet(u"border-bottom: 1px solid;")
+        self.url_search_bar.setSizePolicy(size_policy_7)
+        # self.url_search_bar.setStyleSheet('border-bottom: 1px solid;')
 
-        self.horizontalLayout_7.addWidget(self.url_search_bar)
+        self.horizontal_layout_7.addWidget(self.url_search_bar)
 
         # download button
         self.btn_download = QPushButton(self)
-        self.btn_download.setObjectName(u"btn_download")
-        sizePolicy6 = QSizePolicy(QSizePolicy.Policy.Fixed,
-                                  QSizePolicy.Policy.Fixed)
-        sizePolicy6.setHeightForWidth(
+        self.btn_download.setObjectName('btn_download')
+        size_policy_6 = QSizePolicy(QSizePolicy.Policy.Fixed,
+                                    QSizePolicy.Policy.Fixed)
+        size_policy_6.setHeightForWidth(
             self.btn_download.sizePolicy().hasHeightForWidth())
-        self.btn_download.setSizePolicy(sizePolicy6)
+        self.btn_download.setSizePolicy(size_policy_6)
         self.btn_download.setCursor(QCursor(Qt.PointingHandCursor))
         self.btn_download.setIcon(QIcon(IMAGE_DOWNLOAD_BTN_2))
 
-        self.horizontalLayout_7.addWidget(self.btn_download)
+        self.horizontal_layout_7.addWidget(self.btn_download)
 
-        self.verticalLayout_24.addLayout(self.horizontalLayout_7)
-    # added
+        self.vertical_layout_24.addLayout(self.horizontal_layout_7)
 
-    def update_status_box(self, message):
-        self.status_box.append(message)
-
-    def update_progress_bar(self, value):
-        self.progress_bar.setValue(value)
-
-    def initialize_progress_bar(self):
+    def _initialize_progress_bar(self) -> None:
+        """Initialize progress bar.
+        """
         self.progress_bar = QProgressBar(self)
-        self.progress_bar.setObjectName(u"progress_bar")
-        self.progress_bar.setValue(0)
+        self.progress_bar.setObjectName('progress_bar')
+        self.progress_bar.setValue(100)
 
-        self.verticalLayout_24.addWidget(self.progress_bar)
+        self.vertical_layout_24.addWidget(self.progress_bar)
 
-    # added
-
-    # async def handle_download_track_async(self, url):
-    #     lambda: handle_download_track(
-    #         self, self.url_search_bar.text(), self.signal_repopulate_table_song)
-    #     await asyncio.sleep(1)
-    #     print("Downloading track asynchronously")
-
-    # def handle_download_async(self):
-    #     QTimer.singleShot(0, self.handle_download_track_async_wrapper)
-
-    # def handle_download_track_async_wrapper(self):
-    #     url = self.url_search_bar.text()
-    #     asyncio.run_coroutine_threadsafe(self.handle_download_track_async(url), app.loop())
-
-    def apply_stylesheet(self):
-        with open(STYLE_DOWNLOAD_PAGE, 'r') as file:
+    def _apply_stylesheet(self) -> None:
+        """Apply stylesheet
+        """
+        with open(STYLE_DOWNLOAD_PAGE, 'r', encoding=DEFAULT_ENCODING) as file:
             stylesheet = file.read()
             self.setStyleSheet(stylesheet)
 
-    def configure_parameters(self):
+    def _configure_parameters(self) -> None:
+        """Configure ui component default parameters.
+        """
         self.url_search_bar.setPlaceholderText('YouTube URL: song or playlist')
         self.btn_advanced.setText('Advanced')
         self.check_audio_only.setText('Audio Only')
         self.check_use_default_path.setText('Use Default Path')
         self.status_box.setText('...')
+        self.progress_bar.setFormat('0')

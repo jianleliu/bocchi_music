@@ -1,7 +1,10 @@
+"""Constant file for default parameters."""
 import os
-from .sections import SECTION_SETTINGS_TAB_1, SECTION_PAGE_DOWNLOAD
+
 from .keys import (KEY_CHECK_AUDIO_ONLY, KEY_CHECK_INCLUDE_THUMBNAIL,
-                   KEY_CHECK_USE_DEFAULT_PATH, KEY_DIR_PLAYLIST_DOWNLOAD, KEY_DIR_TRACK_DOWNLOAD)
+                   KEY_CHECK_USE_DEFAULT_PATH, KEY_DIR_PLAYLIST_DOWNLOAD,
+                   KEY_DIR_TRACK_DOWNLOAD)
+from .sections import SECTION_PAGE_DOWNLOAD, SECTION_SETTINGS_TAB_1
 
 DIR_ROOT = os.path.dirname(os.path.dirname(__file__))
 
@@ -29,6 +32,7 @@ DEFAULT_INI_DICT = {
         KEY_CHECK_INCLUDE_THUMBNAIL: DEFAULT_CHECK_INCLUDE_THUMBNAIL,
     },
 }
+DEFAULT_ENCODING = 'utf-8'
 
 # dict_song_entity
 
@@ -51,3 +55,11 @@ DEFAULT_PLAY_ORDER_CYCLE = 0
 DEFAULT_PLAY_ORDER_SHUFFLE = 1
 DEFAULT_LIST_PLAY_ORDER = [DEAFULT_PLAY_ORDER_LOOPS, DEFAULT_PLAY_ORDER_CYCLE,
                            DEFAULT_PLAY_ORDER_SHUFFLE]  # -1: loops, 0: cycle, 1: shuffle
+
+# pages object name
+
+DEFAULT_PAGE_DOWNLOAD_NAME = 'page_download'
+DEFAULT_PAGE_HOME_NAME = 'page_home'
+DEFAULT_PAGE_LIBRARY_NAME = 'page_library'
+DEFAULT_PAGE_PLAYLIST_NAME = 'page_playlist'
+DEFAULT_PAGE_SETTINGS_NAME =  'page_settings'

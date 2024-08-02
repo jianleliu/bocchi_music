@@ -1,8 +1,10 @@
+"""CONSTANT file for image paths."""
 from os import path
+
 DIR_ROOT = path.dirname(path.dirname(__file__))
 
 DIR_IMAGE = path.join(path.join(DIR_ROOT, 'resource'),
-                         'images')
+                      'images')
 
 # side bars
 IMAGE_LOGO = path.join(DIR_IMAGE, 'logo.png')

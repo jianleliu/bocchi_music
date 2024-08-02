@@ -1,16 +1,24 @@
-from PySide6.QtCore import (Qt)
-from PySide6.QtGui import (QCursor)
-from PySide6.QtWidgets import (
-    QFrame, QHBoxLayout, QPushButton, QSizePolicy, QVBoxLayout, QWidget)
+"""not used, blank."""
 import logging
+
+from PySide6.QtWidgets import QFrame
+
+from config.default_parameters import DEFAULT_PAGE_PLAYLIST_NAME
 
 logger = logging.getLogger(__name__)
 
+
 class PlaylistPage(QFrame):
+    """not used, blank.
+
+    Args:
+        QFrame (QFrame): PySide6.QtWidgets
+    """
+
     def __init__(self):
         super().__init__()
         logger.info('initializing')
-        self.setObjectName(u"playlist_page")
+        self.setObjectName(DEFAULT_PAGE_PLAYLIST_NAME)
         # self.verticalLayout_25 = QVBoxLayout(self)
         # self.verticalLayout_25.setObjectName(u"verticalLayout_25")
         # self.horizontalLayout_9 = QHBoxLayout()

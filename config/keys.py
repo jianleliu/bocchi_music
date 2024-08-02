@@ -1,3 +1,4 @@
+"""CONSTANT keys for dict session data."""
 # setting tab 1
 KEY_DIR_TRACK_DOWNLOAD = 'track_download_dir'
 KEY_DIR_PLAYLIST_DOWNLOAD = 'playlist_download_dir'

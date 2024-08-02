@@ -1,3 +1,4 @@
+"""CONSTANT file storing stylesheet path."""
 from os import path
 DIR_ROOT = path.dirname(path.dirname(__file__))
 

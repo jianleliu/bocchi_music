@@ -1,16 +1,31 @@
-from PySide6.QtCore import (QSize, Qt, QTimer, QTime, Signal)
-from PySide6.QtGui import (QCursor, QIcon, QPixmap, QPainter, QTransform)
-from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QPushButton, QSizePolicy, QSlider, QSpacerItem,
-                               QVBoxLayout, QLCDNumber)
-import os
+"""playBar ui file."""
 import logging
+
+from PySide6.QtCore import QSize, Qt, Signal
+from PySide6.QtGui import QCursor, QIcon, QPixmap
+from PySide6.QtWidgets import (QFrame, QHBoxLayout, QLabel, QPushButton,
+                               QSizePolicy, QSlider, QSpacerItem, QVBoxLayout)
+
+from config.default_parameters import (DEAFULT_PLAY_ORDER_LOOPS,
+                                       DEFAULT_PLAY_ORDER,
+                                       DEFAULT_PLAY_ORDER_CYCLE,
+                                       DEFAULT_PLAY_ORDER_SHUFFLE,
+                                       DEFAULT_ENCODING)
+from config.image_manager import (IMAGE_BACKWARD, IMAGE_CYCLE, IMAGE_FORWARD,
+                                  IMAGE_LOGO, IMAGE_LOOP,
+                                  IMAGE_NEXT, IMAGE_PLAY, IMAGE_PREV,
+                                  IMAGE_SHUFFLE, IMAGE_VOLUME)
 from config.style_manager import STYLE_PLAY_BAR
-from config.image_manager import *
-from config.default_parameters import *
 
 logger = logging.getLogger(__name__)
 
+
 class PlayBar(QFrame):
+    """Inherit QFrame.
+
+    Args:
+        QFrame (QFrame): PySide6.QtWidgets.
+    """
     signal_btn_spinning_bocchi_clicked = Signal()
     signal_btn_backward_clicked = Signal()
     signal_btn_prev_clicked = Signal()
@@ -24,38 +39,45 @@ class PlayBar(QFrame):
     signal_slider_volume_changed = Signal(int)
 
     def __init__(self, centralWidget):
+        """child of centralWidget.
+
+        Args:
+            centralWidget (QFrame): PySide6.QtWidgets
+        """
         logger.info('initializing')
         super().__init__(centralWidget)
         self.setObjectName('play_bar')
-        sizePolicy5 = QSizePolicy(QSizePolicy.Policy.Expanding,
-                                  QSizePolicy.Policy.Fixed)
-        sizePolicy5.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
-        self.setSizePolicy(sizePolicy5)
+        size_policy_5 = QSizePolicy(QSizePolicy.Policy.Expanding,
+                                    QSizePolicy.Policy.Fixed)
+        size_policy_5.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
+        self.setSizePolicy(size_policy_5)
         self.setMinimumSize(QSize(0, 85))
         self.setMaximumSize(QSize(16777215, 85))
 
         # layouts
         logger.info('initializing layouts')
-        self.initialize_layout()
+        self._initialize_layout()
 
         # components
         logger.info('initializing components')
-        self.initalize_components()
+        self._initalize_components()
 
         # apply stylesheet
         logger.info('initializing stylesheet')
-        self.apply_stylesheet()
+        self._apply_stylesheet()
         # self.setStyleSheet(TEMP_STYLE)
 
         # configure display text
         logger.info('configure parameters')
-        self.configure_parameters()
+        self._configure_parameters()
 
         # emit signals
         logger.info('emit signals')
-        self.emit_signal()
+        self._emit_signal()
 
-    def emit_signal(self):
+    def _emit_signal(self) -> None:
+        """emit signals to MainWindow.
+        """
         self.btn_spinning_bocchi.clicked.connect(
             self.signal_btn_spinning_bocchi_clicked)
         self.btn_play_pause.clicked.connect(self.signal_btn_play_pause_clicked)
@@ -72,84 +94,95 @@ class PlayBar(QFrame):
         self.slider_volume.valueChanged.connect(
             lambda: self.signal_slider_volume_changed.emit(self.slider_volume.value()))
 
-    def initalize_components(self):
-        self.initialize_button_thumbnail()
-        self.initialize_horizontalSpacer_left()
-        self.initialize_label_current_timestamp()
-        self.initialize_label_track_title()
-        self.initialize_slider_progress()
+    def _initalize_components(self) -> None:
+        """initialize components.
+        """
+        self._initialize_button_thumbnail()
+        self._initialize_horizontal_spacer_left()
+        self._initialize_label_current_timestamp()
+        self._initialize_label_track_title()
+        self._initialize_slider_progress()
         # self.initialize_lcd_current_timestamp()
-        self.initalize_horizontalSpacer_center_bottom_left()
-        self.initialize_buttons()
-        self.initialize_horizontalSpacer_center_bottom_right()
-        self.initialize_label_end_timestamp()
-        self.initialize_horizontalSpacer_right()
-        self.initialize_button_play_order()
-        self.initialize_button_volume()
-        self.initialize_slider_volume()
+        self._initalize_horizontal_spacer_center_bottom_left()
+        self._initialize_buttons()
+        self._initialize_horizontal_spacer_center_bottom_right()
+        self._initialize_label_end_timestamp()
+        self._initialize_horizontal_spacer_right()
+        self._initialize_button_play_order()
+        self._initialize_button_volume()
+        self._initialize_slider_volume()
 
-    def initialize_layout(self):
-        self.horizontalLayout_whole = QHBoxLayout(self)
-        self.horizontalLayout_whole.setObjectName(
-            'horizontalLayout_whole')
+    def _initialize_layout(self) -> None:
+        """initialize layouts.
+        """
+        self.horizontal_layout_whole = QHBoxLayout(self)
+        self.horizontal_layout_whole.setObjectName(
+            'horizontal_layout_whole')
 
-        self.verticalLayout_center_section = QVBoxLayout()
-        self.verticalLayout_center_section.setSpacing(4)
-        self.verticalLayout_center_section.setObjectName(
-            'verticalLayout_center_section')
+        self.vertical_layout_center_section = QVBoxLayout()
+        self.vertical_layout_center_section.setSpacing(4)
+        self.vertical_layout_center_section.setObjectName(
+            'vertical_layout_center_section')
 
-        self.horizontalLayout_center_bottom = QHBoxLayout()
-        self.horizontalLayout_center_bottom.setSpacing(4)
-        self.horizontalLayout_center_bottom.setObjectName(
-            'horizontalLayout_center_bottom')
+        self.horizontal_layout_center_bottom = QHBoxLayout()
+        self.horizontal_layout_center_bottom.setSpacing(4)
+        self.horizontal_layout_center_bottom.setObjectName(
+            'horizontal_layout_center_bottom')
 
-    def initialize_horizontalSpacer_center_bottom_right(self):
-        self.horizontalSpacer_center_bottom_right = QSpacerItem(
+    def _initialize_horizontal_spacer_center_bottom_right(self) -> None:
+        """_initialize_horizontal_spacer_center_bottom_right
+        """
+        self.horizontal_spacer_center_bottom_right = QSpacerItem(
             40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
-        self.horizontalLayout_center_bottom.addItem(
-            self.horizontalSpacer_center_bottom_right)
+        self.horizontal_layout_center_bottom.addItem(
+            self.horizontal_spacer_center_bottom_right)
 
-        self.verticalLayout_center_section.addLayout(
-            self.horizontalLayout_center_bottom)
+        self.vertical_layout_center_section.addLayout(
+            self.horizontal_layout_center_bottom)
 
-        self.horizontalLayout_whole.addLayout(
-            self.verticalLayout_center_section)
+        self.horizontal_layout_whole.addLayout(
+            self.vertical_layout_center_section)
 
-    def initialize_horizontalSpacer_right(self):
-        self.horizontalSpacer_right = QSpacerItem(
+    def _initialize_horizontal_spacer_right(self) -> None:
+        """_initialize_horizontal_spacer_right"""
+        self.horizontal_spacer_right = QSpacerItem(
             40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
 
-        self.horizontalLayout_whole.addItem(self.horizontalSpacer_right)
+        self.horizontal_layout_whole.addItem(self.horizontal_spacer_right)
 
-    def initialize_horizontalSpacer_left(self):
-        self.horizontalSpacer_left = QSpacerItem(
+    def _initialize_horizontal_spacer_left(self) -> None:
+        """_initialize_horizontal_spacer_left"""
+        self.horizontal_spacer_left = QSpacerItem(
             40, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
 
-        self.horizontalLayout_whole.addItem(self.horizontalSpacer_left)
+        self.horizontal_layout_whole.addItem(self.horizontal_spacer_left)
 
-    def initalize_horizontalSpacer_center_bottom_left(self):
-        self.horizontalSpacer_center_bottom_left = QSpacerItem(
+    def _initalize_horizontal_spacer_center_bottom_left(self) -> None:
+        """_initalize_horizontal_spacer_center_bottom_left"""
+        self.horizontal_spacer_center_bottom_left = QSpacerItem(
             40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-        self.horizontalLayout_center_bottom.addItem(
-            self.horizontalSpacer_center_bottom_left)
+        self.horizontal_layout_center_bottom.addItem(
+            self.horizontal_spacer_center_bottom_left)
 
-    def initialize_slider_volume(self):
+    def _initialize_slider_volume(self) -> None:
+        """_initialize_slider_volume"""
         self.slider_volume = QSlider(self)
         self.slider_volume.setObjectName('slider_volume')
-        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Minimum,
-                                  QSizePolicy.Policy.Fixed)
-        sizePolicy4.setHeightForWidth(
+        size_policy_4 = QSizePolicy(QSizePolicy.Policy.Minimum,
+                                    QSizePolicy.Policy.Fixed)
+        size_policy_4.setHeightForWidth(
             self.slider_volume.sizePolicy().hasHeightForWidth())
-        self.slider_volume.setSizePolicy(sizePolicy4)
+        self.slider_volume.setSizePolicy(size_policy_4)
         self.slider_volume.setCursor(QCursor(Qt.PointingHandCursor))
         self.slider_volume.setRange(0, 100)
         self.slider_volume.setValue(100)
         self.slider_volume.setOrientation(Qt.Vertical)
 
-        self.horizontalLayout_whole.addWidget(self.slider_volume)
+        self.horizontal_layout_whole.addWidget(self.slider_volume)
 
-    def initialize_button_volume(self):
+    def _initialize_button_volume(self) -> None:
+        """_initialize_button_volume"""
         self.btn_volume = QPushButton(self)
         self.btn_volume.setObjectName('btn_volume')
         self.btn_volume.setCursor(QCursor(Qt.PointingHandCursor))
@@ -157,16 +190,17 @@ class PlayBar(QFrame):
         icon14.addFile(IMAGE_VOLUME, QSize(), QIcon.Normal, QIcon.Off)
         self.btn_volume.setIcon(icon14)
 
-        self.horizontalLayout_whole.addWidget(self.btn_volume)
+        self.horizontal_layout_whole.addWidget(self.btn_volume)
 
-    def initialize_button_play_order(self):
+    def _initialize_button_play_order(self) -> None:
+        """_initialize_button_play_order"""
         self.btn_play_order = QPushButton(self)
         self.btn_play_order.setObjectName('btn_play_order')
-        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Minimum,
-                                  QSizePolicy.Policy.Fixed)
-        sizePolicy4.setHeightForWidth(
+        size_policy_4 = QSizePolicy(QSizePolicy.Policy.Minimum,
+                                    QSizePolicy.Policy.Fixed)
+        size_policy_4.setHeightForWidth(
             self.btn_play_order.sizePolicy().hasHeightForWidth())
-        self.btn_play_order.setSizePolicy(sizePolicy4)
+        self.btn_play_order.setSizePolicy(size_policy_4)
         self.btn_play_order.setCursor(QCursor(Qt.PointingHandCursor))
         icon13 = QIcon()
         file_path = None
@@ -177,20 +211,22 @@ class PlayBar(QFrame):
         ]
         current_play_order = DEFAULT_PLAY_ORDER
         current_index = [order[0]
-                     for order in PLAY_ORDERS].index(current_play_order)
-        _ , file_path = PLAY_ORDERS[current_index]
+                         for order in PLAY_ORDERS].index(current_play_order)
+        _, file_path = PLAY_ORDERS[current_index]
         icon13.addFile(file_path, QSize(), QIcon.Normal, QIcon.Off)
         self.btn_play_order.setIcon(icon13)
 
-        self.horizontalLayout_whole.addWidget(self.btn_play_order)
+        self.horizontal_layout_whole.addWidget(self.btn_play_order)
 
-    def initialize_label_end_timestamp(self):
+    def _initialize_label_end_timestamp(self) -> None:
+        """_initialize_label_end_timestamp"""
         self.label_end_timestamp = QLabel(self)
         self.label_end_timestamp.setObjectName('label_end_timestamp')
 
-        self.horizontalLayout_whole.addWidget(self.label_end_timestamp)
+        self.horizontal_layout_whole.addWidget(self.label_end_timestamp)
 
-    def initialize_buttons(self):
+    def _initialize_buttons(self) -> None:
+        """_initialize_buttons"""
         # backward
         self.btn_backward = QPushButton(self)
         self.btn_backward.setObjectName('btn_backward')
@@ -199,7 +235,7 @@ class PlayBar(QFrame):
         icon8.addFile(IMAGE_BACKWARD, QSize(), QIcon.Normal, QIcon.Off)
         self.btn_backward.setIcon(icon8)
 
-        self.horizontalLayout_center_bottom.addWidget(self.btn_backward)
+        self.horizontal_layout_center_bottom.addWidget(self.btn_backward)
 
         # prev
         self.btn_prev = QPushButton(self)
@@ -209,7 +245,7 @@ class PlayBar(QFrame):
         icon9.addFile(IMAGE_PREV, QSize(), QIcon.Normal, QIcon.Off)
         self.btn_prev.setIcon(icon9)
 
-        self.horizontalLayout_center_bottom.addWidget(self.btn_prev)
+        self.horizontal_layout_center_bottom.addWidget(self.btn_prev)
 
         # pause
         self.btn_play_pause = QPushButton(self)
@@ -219,7 +255,7 @@ class PlayBar(QFrame):
         icon_play_pause.addFile(IMAGE_PLAY, QSize(), QIcon.Normal, QIcon.Off)
         self.btn_play_pause.setIcon(icon_play_pause)
 
-        self.horizontalLayout_center_bottom.addWidget(self.btn_play_pause)
+        self.horizontal_layout_center_bottom.addWidget(self.btn_play_pause)
 
         # next
         self.btn_next = QPushButton(self)
@@ -229,7 +265,7 @@ class PlayBar(QFrame):
         icon11.addFile(IMAGE_NEXT, QSize(), QIcon.Normal, QIcon.Off)
         self.btn_next.setIcon(icon11)
 
-        self.horizontalLayout_center_bottom.addWidget(self.btn_next)
+        self.horizontal_layout_center_bottom.addWidget(self.btn_next)
 
         # forward
         self.btn_forward = QPushButton(self)
@@ -240,41 +276,44 @@ class PlayBar(QFrame):
         self.btn_forward.setIcon(icon12)
         self.btn_forward.setCheckable(False)
 
-        self.horizontalLayout_center_bottom.addWidget(self.btn_forward)
+        self.horizontal_layout_center_bottom.addWidget(self.btn_forward)
 
-    def initialize_slider_progress(self):
+    def _initialize_slider_progress(self) -> None:
+        """_initialize_slider_progress"""
         self.slider_progress = QSlider(self)
         self.slider_progress.setObjectName('slider_progress')
         self.slider_progress.setMinimumSize(QSize(0, 20))
         self.slider_progress.setCursor(QCursor(Qt.PointingHandCursor))
         self.slider_progress.setOrientation(Qt.Horizontal)
 
-        self.verticalLayout_center_section.addWidget(self.slider_progress)
+        self.vertical_layout_center_section.addWidget(self.slider_progress)
 
-    def initialize_label_track_title(self):
+    def _initialize_label_track_title(self) -> None:
+        """_initialize_label_track_title"""
         self.label_play_title = QLabel(self)
         self.label_play_title.setObjectName('label_play_title')
         self.label_play_title.setMinimumSize(QSize(0, 25))
         self.label_play_title.setAlignment(Qt.AlignCenter)
 
-        self.verticalLayout_center_section.addWidget(self.label_play_title)
+        self.vertical_layout_center_section.addWidget(self.label_play_title)
 
-    def initialize_label_current_timestamp(self):
+    def _initialize_label_current_timestamp(self) -> None:
+        """_initialize_label_current_timestamp"""
         self.label_current_timestamp = QLabel(self)
         self.label_current_timestamp.setObjectName('current_timestamp')
 
-        self.horizontalLayout_whole.addWidget(self.label_current_timestamp)
-        
-    def initialize_button_thumbnail(self):
+        self.horizontal_layout_whole.addWidget(self.label_current_timestamp)
+
+    def _initialize_button_thumbnail(self) -> None:
+        """_initialize_button_thumbnail"""
         self.btn_spinning_bocchi = QPushButton(self)
-        
 
         self.btn_spinning_bocchi.setObjectName('thumbnail')
-        sizePolicy8 = QSizePolicy(QSizePolicy.Policy.Expanding,
-                                  QSizePolicy.Policy.Expanding)
-        sizePolicy8.setHeightForWidth(
+        size_policy_8 = QSizePolicy(QSizePolicy.Policy.Expanding,
+                                    QSizePolicy.Policy.Expanding)
+        size_policy_8.setHeightForWidth(
             self.btn_spinning_bocchi.sizePolicy().hasHeightForWidth())
-        self.btn_spinning_bocchi.setSizePolicy(sizePolicy8)
+        self.btn_spinning_bocchi.setSizePolicy(size_policy_8)
         self.btn_spinning_bocchi.setMinimumSize(QSize(50, 50))
         self.btn_spinning_bocchi.setMaximumSize(QSize(100, 100))
         self.btn_spinning_bocchi.setSizeIncrement(QSize(5, 5))
@@ -282,19 +321,21 @@ class PlayBar(QFrame):
         self.btn_spinning_bocchi.setIconSize(QSize(75, 75))
         self.btn_spinning_bocchi.setCheckable(True)
 
-        self.horizontalLayout_whole.addWidget(self.btn_spinning_bocchi)
+        self.horizontal_layout_whole.addWidget(self.btn_spinning_bocchi)
 
-
-    def apply_stylesheet(self):
-        with open(STYLE_PLAY_BAR, 'r') as file:
+    def _apply_stylesheet(self) -> None:
+        """_apply_stylesheet"""
+        with open(STYLE_PLAY_BAR, 'r', encoding=DEFAULT_ENCODING) as file:
             stylesheet = file.read()
             self.setStyleSheet(stylesheet)
 
-    def update_time(self):
+    def _update_time(self) -> None:
+        """_update_time"""
         self.current_time = self.current_time.addSecs(1)
         self.lcd_current_timestamp.display(self.current_time.toString('mm:ss'))
 
-    def configure_parameters(self):
+    def _configure_parameters(self) -> None:
+        """_configure_parameters"""
         self.label_play_title.setText('Title')
         self.label_current_timestamp.setText('0:00')
         self.label_end_timestamp.setText('0:00')
